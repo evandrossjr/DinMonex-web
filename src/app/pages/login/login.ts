@@ -25,16 +25,13 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {
     // Inicialização básica no construtor.
-    this.loginForm = this.fb.group({});
-  }
-
-  ngOnInit(): void {
-    // Define a estrutura e as validações do formulário.
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      senha: ['', [Validators.required]]
+      password: ['', [Validators.required]]
     });
   }
+
+  ngOnInit(): void { }
 
   onSubmit(): void {
     if (this.loginForm.valid) {

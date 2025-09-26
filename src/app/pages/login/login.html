@@ -15,12 +15,12 @@
         </div>
       </div>
 
-      <!-- Campo Senha -->
+      <!-- Campo password -->
       <div class="form-group">
-        <label for="senha">Senha</label>
-        <input type="password" id="senha" formControlName="senha" placeholder="Sua senha">
-         <div *ngIf="loginForm.get('senha')?.touched && loginForm.get('senha')?.errors?.['required']" class="error-message">
-          A senha é obrigatória.
+        <label for="password">password</label>
+        <input type="password" id="password" formControlName="password" placeholder="Sua password">
+         <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']" class="error-message">
+          A password é obrigatória.
         </div>
       </div>
 
