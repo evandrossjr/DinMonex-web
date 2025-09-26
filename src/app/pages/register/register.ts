@@ -1,56 +1,57 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
+import { Router } from '@angular/router'; // Importa o Router para navegação
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  // Importamos o CommonModule para usar diretivas como *ngIf
-  // e o ReactiveFormsModule para trabalhar com formulários reativos.
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
 
-  // Declara a propriedade para o nosso formulário.
+  // 1. Apenas declaramos a propriedade aqui.
   registerForm: FormGroup;
 
-  // Injeta o FormBuilder para criar o formulário e o AuthService para a lógica de negócio.
-  constructor(private fb: FormBuilder, private authService: AuthService) {
-    this.registerForm = this.fb.group({}); // Inicialização básica
-  }
-
-  ngOnInit(): void {
-    // Define a estrutura e as validações do formulário.
+  // Injetamos as dependências no construtor.
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService,
+    private router: Router
+  ) {
+    // 2. A SOLUÇÃO: Inicializamos o formulário AQUI, dentro do construtor.
+    // Agora, 'fb' já existe e o formulário é criado antes de o HTML ser renderizado.
     this.registerForm = this.fb.group({
-      nome: ['', [Validators.required]],
+      name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      senha: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  // Método chamado quando o formulário é enviado.
+  // O ngOnInit não é necessário para a inicialização do formulário.
+
+  // Método chamado quando o formulário é submetido.
   onSubmit(): void {
-    // Verifica se o formulário é válido antes de prosseguir.
     if (this.registerForm.valid) {
       console.log('Formulário válido. Enviando dados:', this.registerForm.value);
       this.authService.register(this.registerForm.value).subscribe({
         next: (response) => {
           console.log('Resposta do serviço:', response);
-          // Aqui você pode adicionar a lógica para redirecionar o usuário
-          // para a página de login após o sucesso.
+          // Redireciona para a página de login após o registo bem-sucedido.
+          this.router.navigate(['/login']);
         },
         error: (err) => {
-          console.error('Erro no registro:', err);
-          // Aqui você pode exibir uma mensagem de erro para o usuário.
+          console.error('Erro no registo:', err);
+          // Aqui você pode exibir uma mensagem de erro para o utilizador.
         }
       });
     } else {
       console.log('Formulário inválido. Por favor, verifique os campos.');
-      // Marca todos os campos como "tocados" para exibir as mensagens de erro.
       this.registerForm.markAllAsTouched();
     }
   }
 }
+

@@ -1,26 +1,26 @@
 <div class="register-container">
   <div class="register-card">
     <h2>Criar Conta</h2>
-    <p>Comece a organizar suas finanças hoje mesmo.</p>
+    <p>Comece a organizar as suas finanças hoje mesmo.</p>
 
-    <!-- O formulário usa o [formGroup] para se conectar ao TypeScript -->
+    <!-- O formulário usa o [formGroup] para se ligar ao TypeScript -->
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
       <!-- Campo Nome -->
       <div class="form-group">
-        <label for="nome">Nome Completo</label>
-        <input type="text" id="nome" formControlName="nome" placeholder="Seu nome">
+        <label for="name">Nome Completo</label>
+        <!-- CORREÇÃO: Alterado de "nome" para "name" -->
+        <input type="text" id="name" formControlName="name" placeholder="Seu nome">
         <!-- Mensagem de erro para o campo nome -->
-        <div *ngIf="registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched" class="error-message">
+        <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" class="error-message">
           O nome é obrigatório.
         </div>
       </div>
 
-      <!-- Campo E-mail -->
+      <!-- Campo E-mail (já estava correto) -->
       <div class="form-group">
         <label for="email">E-mail</label>
         <input type="email" id="email" formControlName="email" placeholder="seuemail@exemplo.com">
-        <!-- Mensagens de erro para o campo email -->
         <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors" class="error-message">
           <span *ngIf="registerForm.get('email')?.errors?.['required']">O e-mail é obrigatório.</span>
           <span *ngIf="registerForm.get('email')?.errors?.['email']">Por favor, insira um e-mail válido.</span>
@@ -29,17 +29,17 @@
 
       <!-- Campo Senha -->
       <div class="form-group">
-        <label for="senha">Senha</label>
-        <input type="password" id="senha" formControlName="senha" placeholder="Mínimo de 6 caracteres">
-         <!-- Mensagens de erro para o campo senha -->
-         <div *ngIf="registerForm.get('senha')?.touched && registerForm.get('senha')?.errors" class="error-message">
-          <span *ngIf="registerForm.get('senha')?.errors?.['required']">A senha é obrigatória.</span>
-          <span *ngIf="registerForm.get('senha')?.errors?.['minlength']">A senha deve ter no mínimo 6 caracteres.</span>
+        <label for="password">Senha</label>
+        <!-- CORREÇÃO: Alterado de "senha" para "password" -->
+        <input type="password" id="password" formControlName="password" placeholder="Mínimo de 6 caracteres">
+         <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors" class="error-message">
+          <span *ngIf="registerForm.get('password')?.errors?.['required']">A senha é obrigatória.</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['minlength']">A senha deve ter no mínimo 6 caracteres.</span>
         </div>
       </div>
 
       <!-- Botão de Envio -->
-      <button type="submit" [disabled]="!registerForm.valid" class="submit-btn">Cadastrar</button>
+      <button type="submit" [disabled]="!registerForm.valid" class="submit-btn">Registar</button>
     </form>
     
     <div class="login-link">
@@ -47,3 +47,4 @@
     </div>
   </div>
 </div>
+
