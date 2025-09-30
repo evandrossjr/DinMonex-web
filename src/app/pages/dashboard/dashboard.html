@@ -1,1 +1,59 @@
-<p>dashboard works!</p>
+<!-- Navegação Principal -->
+<header class="main-header">
+  <div class="header-container">
+    <div class="logo">DinMonex</div>
+    <nav>
+      <!-- TODO: Adicionar botão de logout -->
+      <button class="logout-btn">Sair</button>
+    </nav>
+  </div>
+</header>
+
+<!-- Conteúdo Principal -->
+<main class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Contas de Consumo</h1>
+    <!-- TODO: Adicionar botão para criar nova transação -->
+    <button class="add-btn">+ Adicionar Conta</button>
+  </div>
+
+  <!-- 1. Indicador de Carregamento -->
+  <!-- A diretiva *ngIf mostra este bloco APENAS se a variável 'isLoading' for verdadeira. -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>A carregar transações...</p>
+  </div>
+
+  <!-- 2. Mensagem de Erro -->
+  <!-- Mostra este bloco APENAS se a variável 'error' tiver algum valor. -->
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- 3. Lista de Transações (o conteúdo principal) -->
+  <!-- Mostra este bloco APENAS se não estiver a carregar, não houver erros, e houver transações para mostrar. -->
+  <div *ngIf="!isLoading && !error && transactions.length > 0" class="transactions-list">
+    <!-- A diretiva *ngFor funciona como um loop. Para cada 'transaction' no nosso array 'transactions'... -->
+    <div *ngFor="let transaction of transactions" class="transaction-item">
+      <div class="transaction-details">
+        <span class="transaction-description">{{ transaction.description }}</span>
+        <span class="transaction-date">{{ transaction.dueDate | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="transaction-value">
+        <!-- O pipe 'currency' formata o número como moeda (ex: R$ 120,50) -->
+        <span>{{ transaction.value | currency: 'BRL' }}</span>
+      </div>
+      <!-- TODO: Adicionar botões de editar e apagar -->
+      <div class="transaction-actions">
+        <button class="action-btn edit-btn">Editar</button>
+        <button class="action-btn delete-btn">Apagar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Mensagem de Nenhuma Transação -->
+  <!-- Mostra este bloco APENAS se não estiver a carregar, não houver erros, e o array de transações estiver vazio. -->
+  <div *ngIf="!isLoading && !error && transactions.length === 0" class="no-transactions">
+    <p>Nenhuma conta de consumo encontrada para este mês.</p>
+    <p>Clique em "Adicionar Conta" para começar.</p>
+  </div>
+</main>
