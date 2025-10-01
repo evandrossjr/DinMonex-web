@@ -1,0 +1,71 @@
+<!-- O fundo escurecido do modal. Clicar aqui também fecha o modal. -->
+<div class="modal-backdrop" (click)="onClose()"></div>
+
+<!-- O conteúdo do modal -->
+<div class="modal-content">
+  <div class="modal-header">
+    <!-- O título muda dinamicamente se estamos a editar ou a criar -->
+    <h3 class="modal-title">{{ isEditMode ? 'Editar Conta' : 'Adicionar Nova Conta' }}</h3>
+    <button class="close-btn" (click)="onClose()">×</button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Mostra um indicador de carregamento enquanto busca os dados para edição -->
+    <div *ngIf="isLoading && isEditMode" class="loading-indicator">
+      A carregar dados...
+    </div>
+
+    <!-- Mostra a mensagem de erro, se houver -->
+    <div *ngIf="errorMessage" class="error-summary">
+      {{ errorMessage }}
+    </div>
+
+    <!-- O formulário só é mostrado se não estiver a carregar (para o modo de edição) -->
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading || !isEditMode">
+      
+      <!-- Campo Descrição -->
+      <div class="form-group">
+        <label for="description">Descrição</label>
+        <input type="text" id="description" formControlName="description" placeholder="Ex: Conta de Luz">
+        <div *ngIf="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched" class="error-message">
+          A descrição é obrigatória.
+        </div>
+      </div>
+
+      <!-- Campo Valor -->
+      <div class="form-group">
+        <label for="value">Valor</label>
+        <input type="number" id="value" formControlName="value" placeholder="0,00">
+        <div *ngIf="transactionForm.get('value')?.touched && transactionForm.get('value')?.errors" class="error-message">
+          <span *ngIf="transactionForm.get('value')?.errors?.['required']">O valor é obrigatório.</span>
+          <span *ngIf="transactionForm.get('value')?.errors?.['min']">O valor deve ser maior que zero.</span>
+        </div>
+      </div>
+
+      <!-- Campo Data de Vencimento -->
+      <div class="form-group">
+        <label for="dueDate">Data de Vencimento</label>
+        <input type="date" id="dueDate" formControlName="dueDate">
+        <div *ngIf="transactionForm.get('dueDate')?.invalid && transactionForm.get('dueDate')?.touched" class="error-message">
+          A data é obrigatória.
+        </div>
+      </div>
+
+      <!-- Campo Recorrente (Checkbox) -->
+      <div class="form-group-checkbox">
+        <input type="checkbox" id="isRecurring" formControlName="isRecurring">
+        <label for="isRecurring">Esta é uma conta recorrente?</label>
+      </div>
+
+      <!-- Ações do Formulário -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid || isLoading">
+          <!-- O texto do botão muda se estiver a carregar ou não -->
+          {{ isLoading ? 'A salvar...' : 'Salvar' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
