@@ -36,6 +36,7 @@ export class DashboardComponent implements OnInit {
    */
   loadTransactions(): void {
     this.isLoading = true;
+    this.error = null; // Limpa erros antigos ao recarregar
     this.transactionService.getConsumptionTransactions().subscribe({
       next: (data) => {
         this.transactions = data;
@@ -64,6 +65,24 @@ export class DashboardComponent implements OnInit {
   openEditModal(id: number): void {
     this.selectedTransactionId = id; // Define o ID para o modo de edição.
     this.isModalVisible = true;
+  }
+
+  /**
+   * Apaga uma transação após confirmação.
+   * @param id O ID da transação a ser apagada.
+   */
+  deleteTransaction(id: number): void {
+    this.transactionService.deleteConsumptionTransaction(id).subscribe({
+      next: () => {
+        console.log(`Transação ${id} apagada com sucesso.`);
+        // Recarrega a lista para remover o item apagado da UI.
+        this.loadTransactions();
+      },
+      error: (err) => {
+        this.error = 'Não foi possível apagar a transação.';
+        console.error(`Erro ao apagar a transação ${id}:`, err);
+      }
+    });
   }
 
   /**
