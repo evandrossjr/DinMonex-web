@@ -21,4 +21,36 @@ export class TransactionService {
   getConsumptionTransactions(): Observable<Transaction[]> {
     return this.http.get<any[]>(`${this.apiUrl}/consumption`);
   }
+
+  /**
+   * NOVO: Busca uma única transação de consumo pelo seu ID.
+   */
+  getConsumptionTransactionById(id: number): Observable<Transaction> {
+    return this.http.get<Transaction>(`${this.apiUrl}/consumption/${id}`);
+  }
+
+  /**
+   * Cria uma nova transação de consumo.
+   * @param transactionData Os dados da transação a ser criada.
+   */
+  createConsumptionTransaction(transactionData: Partial<Transaction>): Observable<Transaction> {
+    return this.http.post<Transaction>(`${this.apiUrl}/consumption`, transactionData);
+  }
+
+  /**
+   * Atualiza uma transação de consumo existente.
+   * @param id O ID da transação a ser atualizada.
+   * @param transactionData Os novos dados da transação.
+   */
+  updateConsumptionTransaction(id: number, transactionData: Partial<Transaction>): Observable<Transaction> {
+    return this.http.put<Transaction>(`${this.apiUrl}/consumption/${id}`, transactionData);
+  }
+
+  /**
+   * Apaga uma transação de consumo.
+   * @param id O ID da transação a ser apagada.
+   */
+  deleteConsumptionTransaction(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/consumption/${id}`);
+  }
 }

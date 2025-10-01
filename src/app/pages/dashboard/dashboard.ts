@@ -1,46 +1,85 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Transaction } from '../../model/transaction.model'; // 1. Importa o nosso modelo de dados
-import { TransactionService } from '../../services/transaction'; // 2. Importa o nosso serviço de transações
+import { Transaction } from '../../model/transaction.model';
+import { TransactionService } from '../../services/transaction';
+import { TransactionFormComponent } from '../../components/transaction-form/transaction-form'; // 1. Importa o nosso novo componente de formulário
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  // O CommonModule é necessário para usar diretivas como *ngFor e *ngIf no nosso HTML.
-  imports: [CommonModule],
+  // 2. Adiciona o TransactionFormComponent aos imports.
+  imports: [CommonModule, TransactionFormComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 export class DashboardComponent implements OnInit {
 
-  // 3. Cria propriedades para guardar o estado do nosso componente.
-  transactions: Transaction[] = []; // Irá guardar a lista de transações recebida da API.
-  isLoading: boolean = true;      // Controla se devemos mostrar um indicador de "a carregar".
-  error: string | null = null;    // Guarda qualquer mensagem de erro que possa ocorrer.
+  transactions: Transaction[] = [];
+  isLoading: boolean = true;
+  error: string | null = null;
 
-  // 4. Injeta o TransactionService para que o possamos usar.
+  // --- NOVAS PROPRIEDADES PARA GERIR O MODAL ---
+  isModalVisible = false;
+  // Guarda o ID da transação que estamos a editar. Nulo se estivermos a criar.
+  selectedTransactionId: number | null = null; 
+
   constructor(private transactionService: TransactionService) { }
 
-  /**
-   * ngOnInit é um "gancho de ciclo de vida" do Angular.
-   * O código dentro dele é executado automaticamente assim que o componente é inicializado.
-   * É o sítio perfeito para ir buscar os dados iniciais.
-   */
   ngOnInit(): void {
-    // 5. Chama o método do nosso serviço para ir buscar os dados.
+    this.loadTransactions(); // Extraímos a lógica de carregamento para um método separado.
+  }
+
+  // --- MÉTODOS PARA GERIR O MODAL E OS DADOS ---
+
+  /**
+   * Carrega ou recarrega a lista de transações da API.
+   */
+  loadTransactions(): void {
+    this.isLoading = true;
     this.transactionService.getConsumptionTransactions().subscribe({
-      // O 'next' é executado quando a API responde com sucesso.
       next: (data) => {
-        this.transactions = data; // Guarda os dados recebidos na nossa propriedade.
-        this.isLoading = false;   // Desliga o indicador de "a carregar".
-        console.log('Transações carregadas com sucesso:', this.transactions);
+        this.transactions = data;
+        this.isLoading = false;
       },
-      // O 'error' é executado se a API responder com um erro.
       error: (err) => {
         this.error = 'Não foi possível carregar as transações. Por favor, tente novamente mais tarde.';
-        this.isLoading = false; // Desliga o indicador de "a carregar" mesmo em caso de erro.
+        this.isLoading = false;
         console.error('Erro ao carregar transações:', err);
       }
     });
   }
+
+  /**
+   * Abre o modal em modo de criação.
+   */
+  openAddModal(): void {
+    this.selectedTransactionId = null; // Garante que não estamos em modo de edição.
+    this.isModalVisible = true;
+  }
+
+  /**
+   * Abre o modal em modo de edição.
+   * @param id O ID da transação a ser editada.
+   */
+  openEditModal(id: number): void {
+    this.selectedTransactionId = id; // Define o ID para o modo de edição.
+    this.isModalVisible = true;
+  }
+
+  /**
+   * Fecha o modal.
+   */
+  onCloseModal(): void {
+    this.isModalVisible = false;
+    this.selectedTransactionId = null; // Limpa o ID selecionado.
+  }
+
+  /**
+   * Chamado quando o formulário emite o evento 'formSaved'.
+   * Recarrega a lista de transações para mostrar os dados atualizados.
+   */
+  onFormSaved(): void {
+    this.loadTransactions();
+  }
 }
+
