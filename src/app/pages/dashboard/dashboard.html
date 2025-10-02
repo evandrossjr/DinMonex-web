@@ -3,8 +3,7 @@
   <div class="header-container">
     <div class="logo">DinMonex</div>
     <nav>
-      <!-- TODO: Adicionar botão de logout -->
-      <button class="logout-btn">Sair</button>
+      <button class="logout-btn" (click)="logout()">Sair</button>
     </nav>
   </div>
 </header>
@@ -13,7 +12,6 @@
 <main class="dashboard-container">
   <div class="dashboard-header">
     <h1>Contas de Consumo</h1>
-    <!-- O botão "Adicionar Conta" agora chama o método para abrir o modal -->
     <button class="add-btn" (click)="openAddModal()">+ Adicionar Conta</button>
   </div>
 
@@ -39,18 +37,14 @@
         <span>{{ transaction.value | currency: 'BRL' }}</span>
       </div>
       <div class="transaction-actions">
-        <!-- O botão "Editar" agora chama o método para abrir o modal em modo de edição -->
         <button class="action-btn edit-btn" (click)="openEditModal(transaction.id)">Editar</button>
-        <!-- O botão "Apagar" agora chama o método para apagar a transação -->
         <button class="action-btn delete-btn" (click)="deleteTransaction(transaction.id)">Apagar</button>
       </div>
     </div>
   </div>
 </main>
 
-<!-- A INTEGRAÇÃO DO MODAL ACONTECE AQUI -->
-<!-- O componente do formulário só é mostrado se 'isModalVisible' for verdadeiro. -->
-<!-- Ele recebe o ID da transação e emite eventos quando é fechado ou salvo. -->
+<!-- O nosso componente de modal -->
 <app-transaction-form 
   *ngIf="isModalVisible"
   [transactionId]="selectedTransactionId"
