@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators'; // Importa o operador tap
+import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router'; // Importa o Router para navegação
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
-  private tokenKey = 'dinmonex_auth_token'; // Chave para guardar o token no armazenamento local
+  private tokenKey = 'dinmonex_auth_token';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData);
@@ -18,9 +19,7 @@ export class AuthService {
 
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
-      // O operador 'tap' permite-nos executar uma ação com o resultado sem o modificar.
       tap(response => {
-        // Se a resposta da API contiver um token, guarda-o.
         if (response && response.token) {
           this.setToken(response.token);
         }
@@ -28,38 +27,42 @@ export class AuthService {
     );
   }
 
-  /**
-   * Guarda o token JWT no localStorage do navegador.
-   * O localStorage persiste mesmo se o utilizador fechar o navegador.
-   * @param token O token JWT recebido da API.
-   */
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
   }
 
-  /**
-   * Obtém o token JWT do localStorage.
-   * @returns O token, se existir, ou nulo.
-   */
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
   /**
-   * Remove o token do localStorage. Essencial para a funcionalidade de logout.
+   * NOVO MÉTODO: Faz o logout do utilizador.
+   * Apaga o token e redireciona para a página de login.
    */
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    this.router.navigate(['/login']);
   }
 
   /**
-   * Verifica se o utilizador está autenticado.
-   * A verificação mais simples é ver se um token existe no armazenamento.
-   * @returns Verdadeiro se o utilizador tiver um token, falso caso contrário.
+   * MÉTODO MELHORADO: Verifica se o utilizador está logado E se o token não expirou.
    */
   isLoggedIn(): boolean {
-    // A dupla negação (!!) transforma o resultado (uma string ou nulo) num booleano (verdadeiro ou falso).
-    return !!this.getToken();
+    const token = this.getToken();
+
+    // Se não houver token, o utilizador não está logado.
+    if (!token) {
+      return false;
+    }
+
+    // Decodifica o payload do token para verificar a data de expiração.
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    
+    // O 'exp' (expiration) do JWT é em segundos, enquanto o Date.now() é em milissegundos.
+    const expiry = payload.exp * 1000;
+    
+    // Se a data de expiração for no futuro, o token é válido.
+    return expiry > Date.now();
   }
 }
 
