@@ -1,71 +1,55 @@
-<!-- O fundo escurecido do modal. Clicar aqui também fecha o modal. -->
-<div class="modal-backdrop" (click)="onClose()"></div>
+<!-- Navegação Principal -->
+<header class="main-header">
+  <div class="header-container">
+    <div class="logo">DinMonex</div>
+    <nav>
+      <!-- A MUDANÇA ESTÁ AQUI: Adicionamos o evento (click) para chamar o nosso método de logout. -->
+      <button class="logout-btn" (click)="logout()">Sair</button>
+    </nav>
+  </div>
+</header>
 
-<!-- O conteúdo do modal -->
-<div class="modal-content">
-  <div class="modal-header">
-    <!-- O título muda dinamicamente se estamos a editar ou a criar -->
-    <h3 class="modal-title">{{ isEditMode ? 'Editar Conta' : 'Adicionar Nova Conta' }}</h3>
-    <button class="close-btn" (click)="onClose()">×</button>
+<!-- Conteúdo Principal -->
+<main class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Contas de Consumo</h1>
+    <button class="add-btn" (click)="openAddModal()">+ Adicionar Conta</button>
   </div>
 
-  <div class="modal-body">
-    <!-- Mostra um indicador de carregamento enquanto busca os dados para edição -->
-    <div *ngIf="isLoading && isEditMode" class="loading-indicator">
-      A carregar dados...
-    </div>
-
-    <!-- Mostra a mensagem de erro, se houver -->
-    <div *ngIf="errorMessage" class="error-summary">
-      {{ errorMessage }}
-    </div>
-
-    <!-- O formulário só é mostrado se não estiver a carregar (para o modo de edição) -->
-    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading || !isEditMode">
-      
-      <!-- Campo Descrição -->
-      <div class="form-group">
-        <label for="description">Descrição</label>
-        <input type="text" id="description" formControlName="description" placeholder="Ex: Conta de Luz">
-        <div *ngIf="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched" class="error-message">
-          A descrição é obrigatória.
-        </div>
-      </div>
-
-      <!-- Campo Valor -->
-      <div class="form-group">
-        <label for="value">Valor</label>
-        <input type="number" id="value" formControlName="value" placeholder="0,00">
-        <div *ngIf="transactionForm.get('value')?.touched && transactionForm.get('value')?.errors" class="error-message">
-          <span *ngIf="transactionForm.get('value')?.errors?.['required']">O valor é obrigatório.</span>
-          <span *ngIf="transactionForm.get('value')?.errors?.['min']">O valor deve ser maior que zero.</span>
-        </div>
-      </div>
-
-      <!-- Campo Data de Vencimento -->
-      <div class="form-group">
-        <label for="dueDate">Data de Vencimento</label>
-        <input type="date" id="dueDate" formControlName="dueDate">
-        <div *ngIf="transactionForm.get('dueDate')?.invalid && transactionForm.get('dueDate')?.touched" class="error-message">
-          A data é obrigatória.
-        </div>
-      </div>
-
-      <!-- Campo Recorrente (Checkbox) -->
-      <div class="form-group-checkbox">
-        <input type="checkbox" id="isRecurring" formControlName="isRecurring">
-        <label for="isRecurring">Esta é uma conta recorrente?</label>
-      </div>
-
-      <!-- Ações do Formulário -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid || isLoading">
-          <!-- O texto do botão muda se estiver a carregar ou não -->
-          {{ isLoading ? 'A salvar...' : 'Salvar' }}
-        </button>
-      </div>
-
-    </form>
+  <!-- Estados de Carregamento, Erro e Lista Vazia -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>A carregar transações...</p>
   </div>
-</div>
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+  <div *ngIf="!isLoading && !error && transactions.length === 0" class="no-transactions">
+    <p>Nenhuma conta de consumo encontrada para este mês.</p>
+  </div>
+
+  <!-- Lista de Transações -->
+  <div *ngIf="!isLoading && !error && transactions.length > 0" class="transactions-list">
+    <div *ngFor="let transaction of transactions" class="transaction-item">
+      <div class="transaction-details">
+        <span class="transaction-description">{{ transaction.description }}</span>
+        <span class="transaction-date">{{ transaction.dueDate | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="transaction-value">
+        <span>{{ transaction.value | currency: 'BRL' }}</span>
+      </div>
+      <div class="transaction-actions">
+        <button class="action-btn edit-btn" (click)="openEditModal(transaction.id)">Editar</button>
+        <button class="action-btn delete-btn" (click)="deleteTransaction(transaction.id)">Apagar</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- O nosso componente de modal -->
+<app-transaction-form 
+  *ngIf="isModalVisible"
+  [transactionId]="selectedTransactionId"
+  (closeModal)="onCloseModal()"
+  (formSaved)="onFormSaved()">
+</app-transaction-form>
+
