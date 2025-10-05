@@ -1,18 +1,27 @@
-// 1. Importa o tipo Routes (APENAS UMA VEZ)
 import { Routes } from '@angular/router';
-
-// 2. Importa os componentes que vamos usar (APENAS UMA VEZ)
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { AuthGuard } from './guards/auth-guard'; 
+import { NoAuthGuard } from './guards/no-auth-guard'; // 1. Importa o nosso novo NoAuthGuard
 
-// 3. Define e exporta o array de rotas (APENAS UMA VEZ)
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'dashboard', component: DashboardComponent },
+  // 2. Protege as rotas de login e registo com o NoAuthGuard.
+  // Apenas utilizadores NÃO logados podem aceder a estas rotas.
+  { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [NoAuthGuard] },
+  
+  // A rota do dashboard continua protegida pelo AuthGuard.
+  // Apenas utilizadores LOGADOS podem aceder.
+  { 
+    path: 'dashboard', 
+    component: DashboardComponent, 
+    canActivate: [AuthGuard]
+  },
+
+  // O redirecionamento padrão pode ir para o login. Se o utilizador já estiver logado,
+  // o NoAuthGuard irá redirecioná-lo para o dashboard.
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];
-
 
