@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { Transaction } from '../../model/transaction.model';
 import { TransactionService } from '../../services/transaction';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-transaction-form',
@@ -13,46 +14,47 @@ import { TransactionService } from '../../services/transaction';
 })
 export class TransactionFormComponent implements OnInit {
 
-  // --- Entradas e Saídas do Componente ---
-
-  // @Input() permite que o componente pai (Dashboard) nos envie dados.
-  // Usaremos isto para passar o ID da transação a ser editada.
-  // Se for nulo, significa que estamos a criar uma nova transação.
   @Input() transactionId: number | null = null;
-
-  // @Output() permite-nos enviar eventos para o componente pai.
   @Output() closeModal = new EventEmitter<void>();
   @Output() formSaved = new EventEmitter<void>();
-
-  // --- Propriedades Internas ---
 
   transactionForm: FormGroup;
   isEditMode = false;
   isLoading = false;
   errorMessage: string | null = null;
 
+  // Propriedade para guardar os tipos de transação
+  transactionTypes = ['CONSUMPTION', 'CREDIT_CARD'];
+
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService
   ) {
-    // Inicializamos o formulário no construtor com a sua estrutura e validações.
+    // Inicializamos o formulário com todos os campos possíveis.
     this.transactionForm = this.fb.group({
+      // Campo para o tipo de transação, obrigatório.
+      type: ['CONSUMPTION', [Validators.required]], 
       description: ['', [Validators.required]],
       value: [null, [Validators.required, Validators.min(0.01)]],
       dueDate: ['', [Validators.required]],
-      isRecurring: [false, [Validators.required]]
+      // Campo para Contas de Consumo
+      isRecurring: [false],
+      // Campo para Cartão de Crédito
+      totalInstallments: [1, [Validators.min(1)]]
     });
   }
 
   ngOnInit(): void {
-    // Verificamos se um ID foi passado quando o componente foi inicializado.
+    this.setupConditionalValidators(); // Configura os validadores dinâmicos
+
     if (this.transactionId !== null) {
       this.isEditMode = true;
       this.isLoading = true;
-      // Se estivermos no modo de edição, vamos buscar os dados da transação à API.
+      // No modo de edição, desabilitamos o seletor de tipo para não permitir a sua alteração.
+      this.transactionForm.get('type')?.disable(); 
+      
       this.transactionService.getConsumptionTransactionById(this.transactionId).subscribe({
         next: (transaction) => {
-          // Preenchemos o formulário com os dados recebidos.
           this.transactionForm.patchValue(transaction);
           this.isLoading = false;
         },
@@ -65,7 +67,36 @@ export class TransactionFormComponent implements OnInit {
     }
   }
 
-  // Método chamado quando o formulário é submetido.
+  /**
+   * Configura a lógica para adicionar/remover validadores com base no tipo de transação.
+   */
+  private setupConditionalValidators(): void {
+    const typeControl = this.transactionForm.get('type');
+    const isRecurringControl = this.transactionForm.get('isRecurring');
+    const totalInstallmentsControl = this.transactionForm.get('totalInstallments');
+
+    // "Escuta" as mudanças no campo 'type'.
+    typeControl?.valueChanges.subscribe(type => {
+      if (type === 'CONSUMPTION') {
+        // Se for consumo, o campo 'isRecurring' é obrigatório.
+        isRecurringControl?.setValidators([Validators.required]);
+        // E o campo de parcelas não é obrigatório.
+        totalInstallmentsControl?.clearValidators();
+      } else if (type === 'CREDIT_CARD') {
+        // Se for cartão, o campo de parcelas é obrigatório e deve ser no mínimo 1.
+        totalInstallmentsControl?.setValidators([Validators.required, Validators.min(1)]);
+        // E o campo recorrente não é obrigatório.
+        isRecurringControl?.clearValidators();
+      }
+      // Atualiza a validade dos controlos.
+      isRecurringControl?.updateValueAndValidity();
+      totalInstallmentsControl?.updateValueAndValidity();
+    });
+
+    // Dispara a verificação inicial
+    typeControl?.updateValueAndValidity();
+  }
+
   onSubmit(): void {
     if (this.transactionForm.invalid) {
       this.transactionForm.markAllAsTouched();
@@ -73,41 +104,41 @@ export class TransactionFormComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const formData = this.transactionForm.value;
+    const formData = this.transactionForm.getRawValue(); // Usa getRawValue() para obter valores de campos desabilitados (como o 'type' em modo de edição)
+
+    // Decide qual método de serviço chamar com base no tipo e no modo (edição/criação)
+    let submissionObservable: Observable<Transaction>;
 
     if (this.isEditMode && this.transactionId) {
-      // Se estivermos a editar, chamamos o método de atualização.
-      this.transactionService.updateConsumptionTransaction(this.transactionId, formData).subscribe({
-        next: () => this.handleSuccess(),
-        error: (err) => this.handleError(err)
-      });
+      submissionObservable = this.transactionService.updateConsumptionTransaction(this.transactionId, formData);
     } else {
-      // Se estivermos a criar, chamamos o método de criação.
-      this.transactionService.createConsumptionTransaction(formData).subscribe({
-        next: () => this.handleSuccess(),
-        error: (err) => this.handleError(err)
-      });
+      if (formData.type === 'CONSUMPTION') {
+        submissionObservable = this.transactionService.createConsumptionTransaction(formData);
+      } else {
+        submissionObservable = this.transactionService.createCreditCardTransaction(formData);
+      }
     }
+
+    submissionObservable.subscribe({
+      next: () => this.handleSuccess(),
+      error: (err) => this.handleError(err)
+    });
   }
 
-  // --- Métodos de Ajuda ---
-
-  // Lida com o sucesso do envio do formulário.
   private handleSuccess(): void {
     this.isLoading = false;
-    this.formSaved.emit(); // Emite o evento para avisar o pai que os dados foram salvos.
+    this.formSaved.emit();
     this.onClose();
   }
 
-  // Lida com erros no envio do formulário.
   private handleError(error: any): void {
     this.isLoading = false;
     this.errorMessage = 'Ocorreu um erro ao salvar a transação. Tente novamente.';
     console.error(error);
   }
 
-  // Emite o evento para fechar o modal.
   onClose(): void {
     this.closeModal.emit();
   }
 }
+

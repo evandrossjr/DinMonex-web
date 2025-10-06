@@ -68,7 +68,7 @@
 .modal-body {
   padding: 24px;
   // Estilos do formulário (reaproveitados das telas de login/registo)
-  .form-group {
+  .form-group, .form-group-checkbox {
     margin-bottom: 20px;
     text-align: left;
 
@@ -81,13 +81,16 @@
 
     input[type="text"],
     input[type="number"],
-    input[type="date"] {
+    input[type="date"],
+    select.form-select {
       width: 100%;
       padding: 12px;
       border: 1px solid #ccc;
       border-radius: 8px;
       box-sizing: border-box;
       transition: border-color 0.3s;
+      font-size: 16px; // Garante consistência de tamanho de fonte
+      font-family: inherit; // Herda a fonte do resto da página
 
       &:focus {
         outline: none;
@@ -103,8 +106,6 @@
     margin-bottom: 24px;
 
     label {
-      font-weight: 500;
-      color: #555;
       cursor: pointer;
     }
     input[type="checkbox"] {
@@ -160,13 +161,26 @@
   }
 }
 
-.error-summary {
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.error-summary, .loading-indicator {
   background-color: #fbeaea;
   color: #dc3545;
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 20px;
   border: 1px solid #f5c6cb;
+  text-align: center;
+}
+
+.loading-indicator {
+  background-color: #e7f3ff;
+  color: #0056b3;
+  border-color: #b8daff;
 }
 
 // Animações
@@ -179,3 +193,4 @@
   from { transform: translateY(-30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
