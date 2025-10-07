@@ -11,9 +11,8 @@
 <!-- Conteúdo Principal -->
 <main class="dashboard-container">
   <div class="dashboard-header">
-    <h1>Contas de Consumo</h1>
-    <!-- O botão "Adicionar Conta" agora chama o método para abrir o modal -->
-    <button class="add-btn" (click)="openAddModal()">+ Adicionar Conta</button>
+    <h1>Minhas Transações</h1>
+    <button class="add-btn" (click)="openAddModal()">+ Adicionar Transação</button>
   </div>
 
   <!-- Estados de Carregamento, Erro e Lista Vazia -->
@@ -24,36 +23,57 @@
     <p>{{ error }}</p>
   </div>
   <div *ngIf="!isLoading && !error && transactions.length === 0" class="no-transactions">
-    <p>Nenhuma conta de consumo encontrada para este mês.</p>
+    <p>Nenhuma transação encontrada.</p>
+    <p>Clique em "Adicionar Transação" para começar.</p>
   </div>
 
-  <!-- Lista de Transações -->
+  <!-- Lista de Transações (com a nova lógica para o botão) -->
   <div *ngIf="!isLoading && !error && transactions.length > 0" class="transactions-list">
     <div *ngFor="let transaction of transactions" class="transaction-item">
-      <div class="transaction-details">
-        <span class="transaction-description">{{ transaction.description }}</span>
-        <span class="transaction-date">{{ transaction.dueDate | date: 'dd/MM/yyyy' }}</span>
+      <div class="transaction-info">
+        <div class="transaction-details">
+          <span class="transaction-description">{{ transaction.description }}</span>
+          
+          <!-- Se for Conta de Consumo -->
+          <div *ngIf="transaction.type === 'CONSUMPTION'" class="transaction-meta">
+            <span>Vencimento: {{ transaction.dueDate | date: 'dd/MM/yyyy' }}</span>
+            <span *ngIf="transaction.isRecurring" class="badge recurring">Recorrente</span>
+          </div>
+
+          <!-- Se for Cartão de Crédito -->
+          <div *ngIf="transaction.type === 'CREDIT_CARD'" class="transaction-meta">
+            <span>Compra em {{ transaction.totalInstallments }}x</span>
+            <!-- Liga o botão ao novo método, a passar o objeto de transação completo -->
+            <button class="view-installments-btn" (click)="openInstallmentModal(transaction)">Ver Parcelas</button>
+          </div>
+        </div>
+        
+        <div class="transaction-value">
+          <span>{{ transaction.value | currency: 'BRL' }}</span>
+        </div>
       </div>
-      <div class="transaction-value">
-        <span>{{ transaction.value | currency: 'BRL' }}</span>
-      </div>
+
       <div class="transaction-actions">
-        <!-- O botão "Editar" agora chama o método para abrir o modal em modo de edição -->
-        <button class="action-btn edit-btn" (click)="openEditModal(transaction.id)">Editar</button>
-        <!-- O botão "Apagar" agora chama o método para apagar a transação -->
+        <!-- O botão Editar só funciona para Contas de Consumo por agora -->
+        <button class="action-btn edit-btn" (click)="openEditModal(transaction.id)" *ngIf="transaction.type === 'CONSUMPTION'">Editar</button>
         <button class="action-btn delete-btn" (click)="deleteTransaction(transaction.id)">Apagar</button>
       </div>
     </div>
   </div>
 </main>
 
-<!-- A INTEGRAÇÃO DO MODAL ACONTECE AQUI -->
-<!-- O componente do formulário só é mostrado se 'isModalVisible' for verdadeiro. -->
-<!-- Ele recebe o ID da transação e emite eventos quando é fechado ou salvo. -->
+<!-- Modal do Formulário -->
 <app-transaction-form 
-  *ngIf="isModalVisible"
+  *ngIf="isTransactionModalVisible"
   [transactionId]="selectedTransactionId"
-  (closeModal)="onCloseModal()"
+  (closeModal)="onCloseTransactionModal()"
   (formSaved)="onFormSaved()">
 </app-transaction-form>
+
+<!-- Modal da Lista de Parcelas -->
+<app-installment-list
+  *ngIf="isInstallmentModalVisible"
+  [installments]="selectedTransactionInstallments"
+  (closeModal)="onCloseInstallmentModal()">
+</app-installment-list>
 
