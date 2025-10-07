@@ -12,7 +12,14 @@ export class TransactionService {
 
   constructor(private http: HttpClient) { }
 
-  // --- MÉTODOS EXISTENTES ---
+  /**
+   * Busca TODAS as transações do utilizador autenticado,
+   * independentemente do tipo.
+   */
+  getAllMyTransactions(): Observable<Transaction[]> {
+    // Este endpoint é mais genérico e será a nossa fonte principal de dados para o dashboard.
+    return this.http.get<Transaction[]>(`${this.apiUrl}`);
+  }
 
   getConsumptionTransactions(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.apiUrl}/consumption`);
@@ -34,11 +41,6 @@ export class TransactionService {
     return this.http.delete<void>(`${this.apiUrl}/consumption/${id}`);
   }
 
-
-  /**
-   * Cria uma nova transação de cartão de crédito (parcelada).
-   * @param transactionData Os dados da compra, incluindo o número de parcelas.
-   */
   createCreditCardTransaction(transactionData: any): Observable<Transaction> {
     return this.http.post<Transaction>(`${this.apiUrl}/credit-card`, transactionData);
   }

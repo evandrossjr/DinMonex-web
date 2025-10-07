@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Transaction } from '../../model/transaction.model';
+import { Installment } from '../../model/installment.model'; // 1. Importa o nosso modelo de Parcela
 import { TransactionService } from '../../services/transaction';
-import { TransactionFormComponent } from '../../components/transaction-form/transaction-form'; // 1. Importa o nosso novo componente de formulário
+import { TransactionFormComponent } from '../../components/transaction-form/transaction-form';
+import { InstallmentListComponent } from '../../components/installment-list/installment-list'; // 2. Importa o nosso novo componente de lista de parcelas
 import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  // 2. Adiciona o TransactionFormComponent aos imports.
-  imports: [CommonModule, TransactionFormComponent],
+  // 3. Adiciona o InstallmentListComponent aos imports.
+  imports: [CommonModule, TransactionFormComponent, InstallmentListComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -19,91 +21,89 @@ export class DashboardComponent implements OnInit {
   isLoading: boolean = true;
   error: string | null = null;
 
-  // --- NOVAS PROPRIEDADES PARA GERIR O MODAL ---
-  isModalVisible = false;
-  // Guarda o ID da transação que estamos a editar. Nulo se estivermos a criar.
+  // Propriedades para gerir o modal de formulário
+  isTransactionModalVisible = false;
   selectedTransactionId: number | null = null; 
+  
+  // --- NOVAS PROPRIEDADES PARA GERIR O MODAL DE PARCELAS ---
+  isInstallmentModalVisible = false;
+  selectedTransactionInstallments: Installment[] = [];
 
   constructor(
     private transactionService: TransactionService,
     private authService: AuthService
-    ) { }
+  ) { }
 
   ngOnInit(): void {
-    this.loadTransactions(); // Extraímos a lógica de carregamento para um método separado.
+    this.loadTransactions();
   }
 
-  // --- MÉTODOS PARA GERIR O MODAL E OS DADOS ---
-
-  /**
-   * Carrega ou recarrega a lista de transações da API.
-   */
   loadTransactions(): void {
     this.isLoading = true;
-    this.transactionService.getConsumptionTransactions().subscribe({
+    this.error = null;
+    // (Esta chamada ao backend precisa de ser criada para retornar as transações com as suas parcelas)
+    this.transactionService.getAllMyTransactions().subscribe({
       next: (data) => {
         this.transactions = data;
         this.isLoading = false;
       },
       error: (err) => {
-        this.error = 'Não foi possível carregar as transações. Por favor, tente novamente mais tarde.';
+        this.error = 'Não foi possível carregar as transações.';
         this.isLoading = false;
         console.error('Erro ao carregar transações:', err);
       }
     });
   }
 
-  /**
-   * Abre o modal em modo de criação.
-   */
+  // --- MÉTODOS PARA O MODAL DE FORMULÁRIO ---
+
   openAddModal(): void {
-    this.selectedTransactionId = null; // Garante que não estamos em modo de edição.
-    this.isModalVisible = true;
+    this.selectedTransactionId = null;
+    this.isTransactionModalVisible = true;
   }
 
-  /**
-   * Abre o modal em modo de edição.
-   * @param id O ID da transação a ser editada.
-   */
   openEditModal(id: number): void {
-    this.selectedTransactionId = id; // Define o ID para o modo de edição.
-    this.isModalVisible = true;
+    this.selectedTransactionId = id;
+    this.isTransactionModalVisible = true;
   }
 
-  /**
-   * Fecha o modal.
-   */
-  onCloseModal(): void {
-    this.isModalVisible = false;
-    this.selectedTransactionId = null; // Limpa o ID selecionado.
+  onCloseTransactionModal(): void {
+    this.isTransactionModalVisible = false;
+    this.selectedTransactionId = null;
   }
 
-  /**
-   * Chamado quando o formulário emite o evento 'formSaved'.
-   * Recarrega a lista de transações para mostrar os dados atualizados.
-   */
   onFormSaved(): void {
     this.loadTransactions();
   }
-  
-  /**
-   * Apaga uma transação após confirmação.
-   * @param id O ID da transação a ser apagada.
-   */
+
   deleteTransaction(id: number): void {
-    // TODO: Adicionar uma confirmação (ex: window.confirm) antes de apagar.
     this.transactionService.deleteConsumptionTransaction(id).subscribe({
-      next: () => {
-        console.log(`Transação ${id} apagada com sucesso.`);
-        this.loadTransactions(); // Recarrega a lista para remover o item apagado da UI.
-      },
-      error: (err) => {
-        this.error = 'Não foi possível apagar a transação.';
-        console.error(`Erro ao apagar a transação ${id}:`, err);
-      }
+      next: () => this.loadTransactions(),
+      error: (err) => console.error(err)
     });
   }
   
+  // --- NOVOS MÉTODOS PARA O MODAL DE PARCELAS ---
+  
+  /**
+   * Abre o modal de parcelas e passa os dados da transação selecionada.
+   * @param transaction A transação cujas parcelas serão exibidas.
+   */
+  openInstallmentModal(transaction: Transaction): void {
+    if (transaction.installments && transaction.installments.length > 0) {
+      this.selectedTransactionInstallments = transaction.installments;
+      this.isInstallmentModalVisible = true;
+    }
+  }
+
+  /**
+   * Fecha o modal de parcelas.
+   */
+  onCloseInstallmentModal(): void {
+    this.isInstallmentModalVisible = false;
+    this.selectedTransactionInstallments = []; // Limpa a lista de parcelas
+  }
+
   logout(): void {
     this.authService.logout();
   }
