@@ -1,0 +1,54 @@
+<!-- Vamos reutilizar a estrutura do cabeçalho do Dashboard para manter a consistência -->
+<header class="main-header">
+  <div class="header-container">
+    <div class="logo">DinMonex</div>
+    <nav>
+      <!-- TODO: Adicionar links de navegação para Dashboard/Dívidas -->
+      <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+      <button class="logout-btn">Sair</button>
+    </nav>
+  </div>
+</header>
+
+<!-- Conteúdo Principal -->
+<main class="debt-list-container">
+  <div class="debt-list-header">
+    <h1>Convites de Dívida Pendentes</h1>
+    <p>Aqui estão as dívidas que outros utilizadores partilharam consigo.</p>
+  </div>
+
+  <!-- Indicador de Carregamento -->
+  <div *ngIf="isLoading" class="state-indicator">
+    <p>A carregar convites...</p>
+  </div>
+
+  <!-- Mensagem de Erro -->
+  <div *ngIf="error" class="state-indicator error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Lista de Convites -->
+  <div *ngIf="!isLoading && !error && pendingInvitations.length > 0" class="invitations-list">
+    <div *ngFor="let debt of pendingInvitations" class="invitation-item">
+      <div class="invitation-details">
+        <span class="invitation-description">{{ debt.description }}</span>
+        <span class="invitation-meta">
+          Enviado por: <strong>{{ debt.createdBy.name }}</strong> | Vencimento: {{ debt.dueDate | date: 'dd/MM/yyyy' }}
+        </span>
+      </div>
+      <div class="invitation-value">
+        <span>{{ debt.value | currency: 'BRL' }}</span>
+      </div>
+      <div class="invitation-actions">
+        <!-- Botões para aceitar ou recusar o convite -->
+        <button class="action-btn reject-btn" (click)="reject(debt.id)">Recusar</button>
+        <button class="action-btn accept-btn" (click)="accept(debt.id)">Aceitar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensagem de Nenhuma Convite -->
+  <div *ngIf="!isLoading && !error && pendingInvitations.length === 0" class="state-indicator no-invitations">
+    <p>Você não tem nenhum convite de dívida pendente.</p>
+  </div>
+</main>
