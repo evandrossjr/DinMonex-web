@@ -2,8 +2,10 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { DebtListComponent } from './pages/debt-list/debt-list';
 import { AuthGuard } from './guards/auth-guard'; 
 import { NoAuthGuard } from './guards/no-auth-guard'; // 1. Importa o nosso novo NoAuthGuard
+
 
 export const routes: Routes = [
   // 2. Protege as rotas de login e registo com o NoAuthGuard.
@@ -17,6 +19,11 @@ export const routes: Routes = [
     path: 'dashboard', 
     component: DashboardComponent, 
     canActivate: [AuthGuard]
+  },
+  
+  { path: 'debts', 
+    component: DebtListComponent, 
+    canActivate: [AuthGuard] 
   },
 
   // O redirecionamento padrão pode ir para o login. Se o utilizador já estiver logado,
