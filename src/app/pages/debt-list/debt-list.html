@@ -3,9 +3,9 @@
   <div class="header-container">
     <div class="logo">DinMonex</div>
     <nav>
-      <!-- TODO: Adicionar links de navegação para Dashboard/Dívidas -->
+      <!-- Adicionamos um link de navegação para voltar ao Dashboard -->
       <a routerLink="/dashboard" class="nav-link">Dashboard</a>
-      <button class="logout-btn">Sair</button>
+      <button class="logout-btn">Sair</button> <!-- TODO: Adicionar a função de logout aqui também -->
     </nav>
   </div>
 </header>
@@ -29,6 +29,7 @@
 
   <!-- Lista de Convites -->
   <div *ngIf="!isLoading && !error && pendingInvitations.length > 0" class="invitations-list">
+    <!-- Para cada 'debt' no nosso array 'pendingInvitations'... -->
     <div *ngFor="let debt of pendingInvitations" class="invitation-item">
       <div class="invitation-details">
         <span class="invitation-description">{{ debt.description }}</span>
@@ -52,3 +53,4 @@
     <p>Você não tem nenhum convite de dívida pendente.</p>
   </div>
 </main>
+

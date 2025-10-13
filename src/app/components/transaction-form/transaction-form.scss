@@ -67,7 +67,7 @@
 
 .modal-body {
   padding: 24px;
-  // Estilos do formulário (reaproveitados das telas de login/registo)
+  // Estilos do formulário
   .form-group, .form-group-checkbox {
     margin-bottom: 20px;
     text-align: left;
@@ -79,9 +79,11 @@
       color: #555;
     }
 
+    // A MUDANÇA ESTÁ AQUI: Adicionamos o 'select.form-select'
     input[type="text"],
     input[type="number"],
     input[type="date"],
+    input[type="email"],
     select.form-select {
       width: 100%;
       padding: 12px;
@@ -89,8 +91,8 @@
       border-radius: 8px;
       box-sizing: border-box;
       transition: border-color 0.3s;
-      font-size: 16px; // Garante consistência de tamanho de fonte
-      font-family: inherit; // Herda a fonte do resto da página
+      font-size: 16px; 
+      font-family: inherit;
 
       &:focus {
         outline: none;
@@ -159,12 +161,6 @@
       cursor: not-allowed;
     }
   }
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 12px;
-  margin-top: 4px;
 }
 
 .error-summary, .loading-indicator {
