@@ -115,7 +115,7 @@ export class TransactionFormComponent implements OnInit {
           submissionObservable = this.transactionService.createCreditCardTransaction(formData);
           break;
         case 'DEBT':
-          submissionObservable = this.debtService.createdSharedDebt(formData);
+          submissionObservable = this.debtService.createSharedDebt(formData);
           break;
         default:
           this.handleError(new Error('Tipo de transação desconhecido'));
