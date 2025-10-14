@@ -3,45 +3,55 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SharedDebt } from '../model/sharedDebt.model';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class DebtService {
-  
-  private apiUrl = 'http://localhost:8080/api/debts'; // URL da API backend
+
+  private apiUrl = 'http://localhost:8080/api/debts';
 
   constructor(private http: HttpClient) { }
 
   /**
    * Cria um novo convite de dívida partilhada.
-   * @param debtData Os dados da dívida, incluindo o e-mail do convidado.
    */
-  createdSharedDebt(debtdata: any): Observable<SharedDebt> {
-    return this.http.post<SharedDebt>(this.apiUrl, debtdata);
+  createSharedDebt(debtData: any): Observable<SharedDebt> {
+    return this.http.post<SharedDebt>(this.apiUrl, debtData);
   }
 
   /**
-   * Obtém todas as dívidas partilhadas do usuário autenticado.
+   * Busca todos os convites de dívida pendentes para o utilizador logado.
    */
-  getSharedDebts(): Observable<SharedDebt[]> {
+  getMyPendingInvitations(): Observable<SharedDebt[]> {
     return this.http.get<SharedDebt[]>(`${this.apiUrl}/invitations/pending`);
   }
 
   /**
-   * Aceita um convite de dívida partilhada.
-   * @param debtId O ID da dívida a ser aceita.
+   * Aceita um convite de dívida.
    */
-  acceptSharedDebt(debtId: number): Observable<SharedDebt> {
+  acceptInvitation(debtId: number): Observable<SharedDebt> {
     return this.http.post<SharedDebt>(`${this.apiUrl}/invitations/${debtId}/accept`, {});
   }
 
   /**
-   * Recusa um convite de dívida partilhada.
-   * @param debtId O ID da dívida a ser recusada.
+   * Recusa um convite de dívida.
    */
-  declineSharedDebt(debtId: number): Observable<SharedDebt> {
-    return this.http.post<SharedDebt>(`${this.apiUrl}/invitations/${debtId}/decline`, {});
+  rejectInvitation(debtId: number): Observable<SharedDebt> {
+    return this.http.post<SharedDebt>(`${this.apiUrl}/invitations/${debtId}/reject`, {});
   }
 
+  /**
+   * NOVO: Busca todas as dívidas criadas pelo utilizador logado.
+   */
+  getMyCreatedDebts(): Observable<SharedDebt[]> {
+    return this.http.get<SharedDebt[]>(`${this.apiUrl}/created-by-me`);
+  }
+
+  /**
+   * NOVO: Busca todas as dívidas partilhadas com o utilizador logado que ele já aceitou.
+   */
+  getDebtsSharedWithMe(): Observable<SharedDebt[]> {
+    return this.http.get<SharedDebt[]>(`${this.apiUrl}/shared-with-me`);
+  }
 }
+
