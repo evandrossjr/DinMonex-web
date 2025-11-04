@@ -1,0 +1,26 @@
+<header class="main-header">
+  <div class="header-container">
+    <!-- O logo é um link para o dashboard principal -->
+    <a routerLink="/dashboard" class="logo-link">
+      <!-- Ícone SVG para o logo (ex: uma carteira) -->
+      <img src="/dimonex.png" alt="DinMonex Logo" class="logo-image">
+      
+    </a>
+
+    <!-- Navegação -->
+    <nav class="main-nav">
+      <a routerLink="/dashboard" 
+         class="nav-link" 
+         routerLinkActive="active" 
+         [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
+      <a routerLink="/debts" 
+         class="nav-link" 
+         routerLinkActive="active">Convites de Dívida</a>
+    </nav>
+
+    <!-- Botão de Sair -->
+    <div class="header-actions">
+      <button class="logout-btn" (click)="logout()">Sair</button>
+    </div>
+  </div>
+</header>

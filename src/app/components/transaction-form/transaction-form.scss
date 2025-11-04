@@ -1,0 +1,192 @@
+// :host é um seletor especial que aplica estilos ao próprio componente.
+:host {
+  position: fixed; // Garante que o modal fique fixo na tela.
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; // Garante que o modal fique por cima de todo o conteúdo.
+}
+
+// O fundo escurecido do modal.
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease-out;
+}
+
+// O conteúdo principal do modal.
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  z-index: 1; // Fica por cima do backdrop.
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  font-weight: 300;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+.modal-body {
+  padding: 24px;
+  // Estilos do formulário
+  .form-group, .form-group-checkbox {
+    margin-bottom: 20px;
+    text-align: left;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    // A MUDANÇA ESTÁ AQUI: Adicionamos o 'select.form-select'
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    select.form-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+      font-size: 16px; 
+      font-family: inherit;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    }
+  }
+
+  .form-group-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+
+    label {
+      cursor: pointer;
+    }
+    input[type="checkbox"] {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f9f9f9;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+
+  &.btn-secondary {
+    background-color: #f0f2f5;
+    color: #555;
+    border: 1px solid #ccc;
+
+    &:hover {
+      background-color: #e2e6ea;
+    }
+  }
+
+  &.btn-primary {
+    background-color: #007bff;
+    color: white;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+    
+    &:disabled {
+      background-color: #a0c7e4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.error-summary, .loading-indicator {
+  background-color: #fbeaea;
+  color: #dc3545;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c6cb;
+  text-align: center;
+}
+
+.loading-indicator {
+  background-color: #e7f3ff;
+  color: #0056b3;
+  border-color: #b8daff;
+}
+
+// Animações
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+

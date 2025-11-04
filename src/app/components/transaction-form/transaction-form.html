@@ -1,0 +1,87 @@
+<!-- O fundo escurecido do modal. -->
+<div class="modal-backdrop" (click)="onClose()"></div>
+
+<!-- O conteúdo do modal -->
+<div class="modal-content">
+  <div class="modal-header">
+    <h3 class="modal-title">{{ isEditMode ? 'Editar Conta' : 'Adicionar Nova Transação' }}</h3>
+    <button class="close-btn" (click)="onClose()">×</button>
+  </div>
+
+  <div class="modal-body">
+    <div *ngIf="isLoading && isEditMode" class="loading-indicator">
+      A carregar dados...
+    </div>
+
+    <div *ngIf="errorMessage" class="error-summary">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading || !isEditMode">
+      
+      <!-- NOVO CAMPO: Seletor de Tipo -->
+      <div class="form-group">
+        <label for="type">Tipo de Transação</label>
+        <select id="type" formControlName="type" class="form-select">
+          <option value="CONSUMPTION">Conta de Consumo</option>
+          <option value="CREDIT_CARD">Cartão de Crédito</option>
+          <option value="DEBT">Dívida Partilhada</option>
+        </select>
+      </div>
+
+      <!-- Campos Comuns -->
+      <div class="form-group">
+        <label for="description">Descrição</label>
+        <input type="text" id="description" formControlName="description" placeholder="Ex: Compra no Supermercado">
+        <div *ngIf="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched" class="error-message">
+          A descrição é obrigatória.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="value">Valor</label>
+        <input type="number" id="value" formControlName="value" placeholder="0,00">
+        <!-- ... mensagens de erro ... -->
+      </div>
+
+      <div class="form-group">
+        <label for="dueDate">Data de Vencimento</label>
+        <input type="date" id="dueDate" formControlName="dueDate">
+        <!-- ... mensagens de erro ... -->
+      </div>
+
+      <!-- CAMPO CONDICIONAL: Mostra apenas para Contas de Consumo -->
+      <div *ngIf="transactionForm.get('type')?.value === 'CONSUMPTION'" class="form-group-checkbox">
+        <input type="checkbox" id="isRecurring" formControlName="isRecurring">
+        <label for="isRecurring">Esta é uma conta recorrente?</label>
+      </div>
+
+      <!-- CAMPO CONDICIONAL: Mostra apenas para Cartão de Crédito -->
+      <div *ngIf="transactionForm.get('type')?.value === 'CREDIT_CARD'" class="form-group">
+        <label for="totalInstallments">Número de Parcelas</label>
+        <input type="number" id="totalInstallments" formControlName="totalInstallments">
+        <!-- ... mensagens de erro ... -->
+      </div>
+
+      <!-- CAMPO CONDICIONAL: Mostra apenas para Dívidas Partilhadas -->
+      <div *ngIf="transactionForm.get('type')?.value === 'DEBT'" class="form-group">
+        <label for="invitedUserEmail">E-mail do Convidado</label>
+        <input type="email" id="invitedUserEmail" formControlName="invitedUserEmail" placeholder="email@exemplo.com">
+        <div *ngIf="transactionForm.get('invitedUserEmail')?.touched && transactionForm.get('invitedUserEmail')?.errors" class="error-message">
+          <span *ngIf="transactionForm.get('invitedUserEmail')?.errors?.['required']">O e-mail é obrigatório.</span>
+          <span *ngIf="transactionForm.get('invitedUserEmail')?.errors?.['email']">Por favor, insira um e-mail válido.</span>
+        </div>
+      </div>
+
+      <!-- Ações do Formulário -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid || isLoading">
+          {{ isLoading ? 'A salvar...' : 'Salvar' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+

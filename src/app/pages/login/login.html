@@ -1,1 +1,42 @@
-<p>login works!</p>
+<div class="login-container">
+  <div class="login-card">
+    
+    <div class="logo-wrapper">
+      <img src="/dimonex.png" alt="DinMonex Logo" class="logo-image">
+    </div>
+    
+
+    <h2>Bem-vindo de volta!</h2>
+    <p>Insira seus dados para acessar à sua conta.</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <!-- Campo E-mail -->
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" formControlName="email" placeholder="seuemail@exemplo.com">
+        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors" class="error-message">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">O e-mail é obrigatório.</span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">Por favor, insira um e-mail válido.</span>
+        </div>
+      </div>
+
+      <!-- Campo Senha -->
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input type="password" id="password" formControlName="password" placeholder="Sua senha">
+         <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']" class="error-message">
+          A senha é obrigatória.
+        </div>
+      </div>
+
+      <!-- Botão de Envio -->
+      <button type="submit" [disabled]="!loginForm.valid" class="submit-btn">Entrar</button>
+    </form>
+    
+    <div class="register-link">
+      Não tem uma conta? <a href="/register">Cadastre-se</a>
+    </div>
+  </div>
+</div>
+

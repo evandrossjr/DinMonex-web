@@ -1,0 +1,42 @@
+<!-- O fundo escurecido do modal. Clicar aqui também fecha o modal. -->
+<div class="modal-backdrop" (click)="onClose()"></div>
+
+<!-- O conteúdo do modal -->
+<div class="modal-content">
+  <div class="modal-header">
+    <h3 class="modal-title">Detalhes das Parcelas</h3>
+    <button class="close-btn" (click)="onClose()">×</button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Verifica se há parcelas para exibir -->
+    <div *ngIf="installments && installments.length > 0; else noInstallments">
+      <ul class="installments-list">
+        <!-- Loop para exibir cada parcela -->
+        <li *ngFor="let installment of installments" class="installment-item" [class.paid]="installment.isPaid">
+          <div class="installment-info">
+            <span class="installment-number">Parcela {{ installment.installmentNumber }}</span>
+            <span class="installment-date">Vencimento: {{ installment.dueDate | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="installment-status">
+            <span class="installment-value">{{ installment.value | currency: 'BRL' }}</span>
+            <!-- Mostra um badge com o status da parcela -->
+            <span class="status-badge" [ngClass]="installment.isPaid ? 'status-paid' : 'status-pending'">
+              {{ installment.isPaid ? 'Paga' : 'Pendente' }}
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Template a ser exibido se não houver parcelas -->
+    <ng-template #noInstallments>
+      <p>Não foram encontradas parcelas para esta transação.</p>
+    </ng-template>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onClose()">Fechar</button>
+  </div>
+</div>
+<p>installment-list works!</p>

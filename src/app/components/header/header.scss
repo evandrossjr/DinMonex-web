@@ -1,0 +1,98 @@
+// :host aplica o estilo ao elemento <app-header>
+:host {
+  display: block;
+  width: 100%;
+}
+
+.main-header {
+  background-color: #ffffff;
+  padding: 0 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo-icon {
+  color: #007bff; 
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.logo-image {
+  width: 200px; // Largura do logo (ajuste conforme necessário)
+  height: auto; // Altura automática para manter a proporção
+  object-fit: contain; // Garante que a imagem mantenha a proporção e se encaixe
+  margin-top: 2px; 
+  margin-bottom: 2px; 
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 32px; // Espaçamento entre os links de navegação
+}
+
+.nav-link {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+  text-decoration: none;
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+
+  &:hover {
+    color: #007bff;
+  }
+
+  // Estilo para o link da página ativa
+  &.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: #007bff;
+    color: white;
+  }
+
+  
+}

@@ -1,1 +1,95 @@
-<p>dashboard works!</p>
+<!-- Navegação Principal -->
+<app-header></app-header>
+
+<!-- Conteúdo Principal -->
+<main class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Minhas Transações e Dívidas</h1>
+    <button class="add-btn" (click)="openAddModal()">+ Adicionar</button>
+  </div>
+
+  <!-- Estados de Carregamento, Erro e Lista Vazia -->
+  <div *ngIf="isLoading" class="state-indicator">
+    <p>A carregar dados...</p>
+  </div>
+  <div *ngIf="error" class="state-indicator error-message">
+    <p>{{ error }}</p>
+  </div>
+  <div *ngIf="!isLoading && !error && displayItems.length === 0" class="state-indicator no-transactions">
+    <p>Nenhuma transação ou dívida encontrada.</p>
+  </div>
+
+  <!-- Lista de Itens (AGORA DINÂMICA) -->
+  <div *ngIf="!isLoading && !error && displayItems.length > 0" class="items-list">
+    <!-- Para cada 'item' no nosso array 'displayItems'... -->
+    <div *ngFor="let item of displayItems" class="item-card">
+      
+      <!-- LÓGICA CONDICIONAL PARA O TIPO DE ITEM -->
+      
+      <!-- Se for uma Transação Normal (Consumo ou Cartão) -->
+      <ng-container *ngIf="item.type !== 'DEBT'">
+        <div class="item-info">
+          <div class="item-details">
+            <span class="item-description">{{ item.description }}</span>
+            <div *ngIf="item.type === 'CONSUMPTION'" class="item-meta">
+              <span>Vencimento: {{ item.dueDate | date: 'dd/MM/yyyy' }}</span>
+              <span *ngIf="item.isRecurring" class="badge recurring">Recorrente</span>
+            </div>
+            <div *ngIf="item.type === 'CREDIT_CARD'" class="item-meta">
+              <span>Compra em {{ item.totalInstallments }}x</span>
+              <button class="view-installments-btn" (click)="openInstallmentModal(item)">Ver Parcelas</button>
+            </div>
+          </div>
+          <div class="item-value" [class.credit]="item.type === 'CREDIT_CARD'">
+            <span>{{ item.value | currency: 'BRL' }}</span>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="action-btn edit-btn" (click)="openEditModal(item.id)" *ngIf="item.type === 'CONSUMPTION'">Editar</button>
+          <button class="action-btn delete-btn" (click)="deleteTransaction(item.id)">Apagar</button>
+        </div>
+      </ng-container>
+
+      <!-- Se for uma Dívida Partilhada -->
+      <ng-container *ngIf="item.type === 'DEBT'">
+        <div class="item-info">
+          <div class="item-details">
+            <span class="item-description">{{ item.description }}</span>
+            <div class="item-meta">
+              <!-- Mostra com quem a dívida está a ser partilhada -->
+              <span *ngIf="item.debtInfo.perspective === 'CREATED'">
+                Partilhada com: <strong>{{ item.debtInfo.otherPartyName }}</strong>
+              </span>
+              <span *ngIf="item.debtInfo.perspective === 'SHARED'">
+                Dívida de: <strong>{{ item.debtInfo.otherPartyName }}</strong>
+              </span>
+            </div>
+          </div>
+          <div class="item-value" [class.debt-created]="item.debtInfo.perspective === 'CREATED'" [class.debt-shared]="item.debtInfo.perspective === 'SHARED'">
+            <span>{{ item.value | currency: 'BRL' }}</span>
+          </div>
+        </div>
+        <div class="item-actions">
+           <!-- Mostra o status da dívida -->
+          <span class="badge" [ngClass]="item.debtInfo.status">{{ item.debtInfo.status }}</span>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</main>
+
+<!-- Modais (sem alterações) -->
+<app-transaction-form 
+  *ngIf="isTransactionModalVisible"
+  [transactionId]="selectedTransactionId"
+  (closeModal)="onCloseTransactionModal()"
+  (formSaved)="onFormSaved()">
+</app-transaction-form>
+
+<app-installment-list
+  *ngIf="isInstallmentModalVisible"
+  [installments]="selectedTransactionInstallments"
+  (closeModal)="onCloseInstallmentModal()">
+</app-installment-list>
+
