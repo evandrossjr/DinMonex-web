@@ -1,7 +1,12 @@
 <div class="login-container">
   <div class="login-card">
+    
+    <div class="logo-wrapper">
+      <img src="/dimonex.png" alt="DinMonex Logo" class="logo-image">
+    </div>
+
     <h2>Bem-vindo de volta!</h2>
-    <p>Insira suas credenciais para aceder à sua conta.</p>
+    <p>Insira seus dados para acessar à sua conta.</p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
@@ -15,12 +20,12 @@
         </div>
       </div>
 
-      <!-- Campo password -->
+      <!-- Campo Senha -->
       <div class="form-group">
-        <label for="password">password</label>
-        <input type="password" id="password" formControlName="password" placeholder="Sua password">
+        <label for="password">Senha</label>
+        <input type="password" id="password" formControlName="password" placeholder="Sua senha">
          <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']" class="error-message">
-          A password é obrigatória.
+          A senha é obrigatória.
         </div>
       </div>
 
@@ -33,3 +38,4 @@
     </div>
   </div>
 </div>
+

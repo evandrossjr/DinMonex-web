@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router'; // 1. Importa o RouterLink
 import { Transaction } from '../../model/transaction.model';
 import { Installment } from '../../model/installment.model';
 import { TransactionService } from '../../services/transaction';
@@ -10,13 +9,14 @@ import { InstallmentListComponent } from '../../components/installment-list/inst
 import { AuthService } from '../../services/auth';
 import { forkJoin, map } from 'rxjs';
 import { SharedDebt } from '../../model/sharedDebt.model';
+import { HeaderComponent } from '../../components/header/header';
 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   // 2. Adiciona o RouterLink ao array de imports.
-  imports: [CommonModule, RouterLink, TransactionFormComponent, InstallmentListComponent],
+  imports: [HeaderComponent,CommonModule, TransactionFormComponent, InstallmentListComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
