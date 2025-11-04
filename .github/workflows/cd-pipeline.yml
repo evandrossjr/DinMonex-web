@@ -1,35 +1,26 @@
-# Nome do workflow que aparecerá na aba "Actions" do GitHub.
-name: CD Pipeline para Frontend DinMonex
+# Nome do workflow
+name: Deploy Frontend para Netlify
 
-# Define o gatilho. Este pipeline rodará a cada push na branch 'main'.
-# A ideia é que o site seja atualizado em produção toda vez que o código
-# final for mesclado na branch principal.
+# Define que o pipeline será executado a cada push na branch 'main'
 on:
   push:
     branches: [ "main" ]
 
-# Define os jobs.
 jobs:
   build-and-deploy:
-    # Define o ambiente de execução.
     runs-on: ubuntu-latest
-
-    # Define os passos.
+    
     steps:
-      # Passo 1: Checkout do código
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # Passo 2: Configurar o Node.js
-      # Instala a versão 18 do Node.js, que é uma versão LTS estável.
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '18' # Versão LTS estável para Angular
 
-      # Passo 3: Cache das dependências do npm
-      # Acelera o processo guardando as dependências entre as execuções.
-      - name: Cache de dependências do npm
+      - name: Cache de dependências
+        id: cache-node-modules
         uses: actions/cache@v4
         with:
           path: ~/.npm
@@ -37,30 +28,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Passo 4: Instalar as dependências
-      # 'npm ci' é mais rápido e seguro para pipelines do que 'npm install'.
       - name: Instalar dependências
         run: npm ci
 
-      # Passo 5: Build da aplicação para produção
-      # O comando 'ng build' compila o projeto Angular. A flag '--configuration production'
-      # aplica otimizações para deixar os arquivos finais menores e mais rápidos.
-      - name: Build da aplicação
-        run: ng build --configuration production
+      - name: Build da aplicação (Produção)
+        # O comando ng build compila o Angular e otimiza para produção.
+        run: npm run build -- --configuration production
 
-      # Passo 6: Deploy para o Netlify (Exemplo)
-      # Esta é a etapa de Continuous Deployment (CD).
-      # Este exemplo usa a action do Netlify, um serviço excelente para hospedar sites Angular.
-      - name: Deploy para o Netlify
+      # Passo de Deploy para Netlify
+      - name: Deploy para Netlify
         uses: netlify/actions/cli@master
         with:
-          # A pasta 'dist/dinmonex-web/browser' é onde o Angular gera os arquivos do build.
-          # Verifique o nome da pasta em 'dist/' após rodar 'ng build' localmente.
+          # O diretório que contém os arquivos estáticos após o build
           dir: 'dist/dinmonex-web/browser' 
-          # O comando 'netlify deploy --prod' publica o site.
+          # O comando 'netlify deploy --prod' publica o site
           prod: true
         env:
-          # Você precisa criar esses "Secrets" nas configurações do seu repositório no GitHub
-          # com os tokens de acesso do Netlify.
+          # Variáveis secretas que você deve configurar no GitHub Secrets
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
