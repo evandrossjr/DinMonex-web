@@ -5,7 +5,6 @@
   font-family: 'Inter', sans-serif;
 }
 
-// Estilo do Cabeçalho (sem alterações)
 .main-header {
   background-color: #ffffff;
   padding: 0 40px;
@@ -136,6 +135,7 @@ nav {
 }
 
 .item-description {
+  width:200px;
   font-size: 16px;
   font-weight: 500;
   color: #333;
@@ -154,11 +154,11 @@ nav {
   font-weight: 600;
   color: #dc3545; // Cor padrão para despesas
   min-width: 120px;
-  text-align: right;
+  text-align: left;
 
   // Cores específicas para tipos de transação
   &.credit { color: #ff8c00; } // Laranja para cartão de crédito
-  &.debt-created { color: #28a745; } // Verde para dívidas que você criou (dinheiro a receber)
+  &.debt-created { color: #a95f1a; } // Verde para dívidas que você criou (dinheiro a receber)
   &.debt-shared { color: #dc3545; } // Vermelho para dívidas que você aceitou (dinheiro a pagar)
 }
 
