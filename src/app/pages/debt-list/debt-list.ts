@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router'; // 1. Importa o RouterLink para a navegação
 import { SharedDebt } from '../../model/sharedDebt.model';
 import { DebtService } from '../../services/debt';
 import { AuthService } from '../../services/auth'; // 2. Importa o AuthService para o logout
+import { HeaderComponent } from '../../components/header/header';
 
 @Component({
   selector: 'app-debt-list',
   standalone: true,
   // 3. Adiciona RouterLink aos imports.
-  imports: [CommonModule, RouterLink],
+  imports: [HeaderComponent, CommonModule],
   templateUrl: './debt-list.html',
   styleUrl: './debt-list.scss'
 })
