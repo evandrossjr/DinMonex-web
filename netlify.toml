@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build -- --configuration production"
+  publish = "dist/dinmonex-web/browser"
+
+[[plugins]]
+  package = "@netlify/angular-runtime"
+
+[build.environment]
+  NODE_VERSION = "18"
