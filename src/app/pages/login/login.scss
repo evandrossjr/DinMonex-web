@@ -1,4 +1,3 @@
-// Usando o mesmo estilo do componente de cadastro para manter a consistência.
 :host {
   display: flex;
   justify-content: center;
@@ -31,6 +30,21 @@
     margin-bottom: 30px;
     color: #666;
   }
+}
+
+// Estilos para o wrapper do logo e a imagem
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2px; // Espaçamento entre o logo e o título "Bem-vindo de volta!"
+}
+
+.logo-image {
+  width: 350px; // Largura do logo (ajuste conforme necessário)
+  height: auto; // Altura automática para manter a proporção
+  object-fit: contain; // Garante que a imagem mantenha a proporção e se encaixe
+  margin-top: -150px; // Puxa o logo para cima para que fique acima do card de login
+  margin-bottom: -150px; // Adiciona um pequeno espaço entre o logo e o card
 }
 
 .form-group {

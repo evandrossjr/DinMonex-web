@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { Transaction } from '../../model/transaction.model';
 import { Installment } from '../../model/installment.model';
 import { TransactionService } from '../../services/transaction';
@@ -15,7 +15,6 @@ import { HeaderComponent } from '../../components/header/header';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  // 2. Adiciona o RouterLink ao array de imports.
   imports: [HeaderComponent,CommonModule, TransactionFormComponent, InstallmentListComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
