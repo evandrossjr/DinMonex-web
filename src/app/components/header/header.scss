@@ -30,13 +30,21 @@
 }
 
 .logo-icon {
-  color: #007bff; // Cor primária da sua marca
+  color: #007bff; 
 }
 
 .logo-text {
   font-size: 24px;
   font-weight: bold;
   color: #333;
+}
+
+.logo-image {
+  width: 200px; // Largura do logo (ajuste conforme necessário)
+  height: auto; // Altura automática para manter a proporção
+  object-fit: contain; // Garante que a imagem mantenha a proporção e se encaixe
+  margin-top: 2px; 
+  margin-bottom: 2px; 
 }
 
 .main-nav {
@@ -85,4 +93,6 @@
     background-color: #007bff;
     color: white;
   }
+
+  
 }
