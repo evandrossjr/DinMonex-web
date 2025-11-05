@@ -8,7 +8,7 @@ import { Router } from '@angular/router'; // Importa o Router para navegação
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'https://dimonex.onrender.com/api/auth';
   private tokenKey = 'dinmonex_auth_token';
 
   constructor(private http: HttpClient, private router: Router) { }
