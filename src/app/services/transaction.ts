@@ -8,7 +8,7 @@ import { Transaction } from '../model/transaction.model';
 })
 export class TransactionService {
 
-  private apiUrl = 'http://localhost:8080/api/transactions';
+  private apiUrl = 'https://dimonex.onrender.com/api/transactions';
 
   constructor(private http: HttpClient) { }
 
