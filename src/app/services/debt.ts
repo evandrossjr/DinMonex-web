@@ -8,7 +8,7 @@ import { SharedDebt } from '../model/sharedDebt.model';
 })
 export class DebtService {
 
-  private apiUrl = 'https://dimonex.onrender.com/api/debts';
+  private apiUrl = 'http://localhost:8080/api/debts';
 
   constructor(private http: HttpClient) { }
 
