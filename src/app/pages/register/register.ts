@@ -36,10 +36,8 @@ export class RegisterComponent {
   // Método chamado quando o formulário é submetido.
   onSubmit(): void {
     if (this.registerForm.valid) {
-      console.log('Formulário válido. Enviando dados:', this.registerForm.value);
       this.authService.register(this.registerForm.value).subscribe({
         next: (response) => {
-          console.log('Resposta do serviço:', response);
           // Redireciona para a página de login após o registo bem-sucedido.
           this.router.navigate(['/login']);
         },
