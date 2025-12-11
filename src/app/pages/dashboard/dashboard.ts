@@ -10,12 +10,13 @@ import { AuthService } from '../../services/auth';
 import { forkJoin, map } from 'rxjs';
 import { SharedDebt } from '../../model/sharedDebt.model';
 import { HeaderComponent } from '../../components/header/header';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HeaderComponent,CommonModule, TransactionFormComponent, InstallmentListComponent],
+  imports: [HeaderComponent,CommonModule, TransactionFormComponent, InstallmentListComponent, FormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -29,6 +30,9 @@ export class DashboardComponent implements OnInit {
   isInstallmentModalVisible = false;
   selectedTransactionInstallments: Installment[] = [];
 
+  currentMonthFilter: string = new Date().toISOString().substring(0, 7);
+  summaryData: {totalGeral: number, totalPago: number, totalPendente: number} = {totalGeral: 0, totalPago: 0, totalPendente: 0};
+
   constructor(
     private transactionService: TransactionService,
     private debtService: DebtService,
@@ -39,26 +43,39 @@ export class DashboardComponent implements OnInit {
     this.loadAllData();
   }
 
+  onDateChange(): void {
+    this.loadAllData();
+  }
+
   loadAllData(): void {
     this.isLoading = true;
     this.error = null;
 
+    const [yearStr, monthStr] = this.currentMonthFilter.split('-');
+    const year = parseInt(yearStr);
+    const month = parseInt(monthStr);
+
     forkJoin({
-      transactions: this.transactionService.getAllMyTransactions(),
-      createdDebts: this.debtService.getMyCreatedDebts(),
-      sharedDebts: this.debtService.getDebtsSharedWithMe()
+      transactions: this.transactionService.getAllMyTransactions(month, year),
+      resume: this.transactionService.getResumeTransactions(month, year),
+      //createdDebts: this.debtService.getMyCreatedDebts(),
+      //sharedDebts: this.debtService.getDebtsSharedWithMe()
     }).pipe(
-      map(({ transactions, createdDebts, sharedDebts }) => {
-        const createdDebtItems = createdDebts.map(debt => this.mapSharedDebtToDisplayItem(debt, 'CREATED'));
-        const sharedDebtItems = sharedDebts.map(debt => this.mapSharedDebtToDisplayItem(debt, 'SHARED'));
-        return [...transactions, ...createdDebtItems, ...sharedDebtItems];
+      map(({ transactions, resume/*, createdDebts, sharedDebts*/ }) => {
+        //const createdDebtItems = createdDebts.map(debt => this.mapSharedDebtToDisplayItem(debt, 'CREATED'));
+        //const sharedDebtItems = sharedDebts.map(debt => this.mapSharedDebtToDisplayItem(debt, 'SHARED'));
+        this.summaryData = resume;
+        
+        return [...transactions /*...createdDebtItems, ...sharedDebtItems*/];
       })
     ).subscribe({
       next: (combinedData) => {
         this.displayItems = combinedData.sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
         this.isLoading = false;
+        console.log("Dados carregados:", combinedData);
       },
       error: (err) => {
+        console.error("ERRO NO DASHBOARD", err);
         this.error = 'Não foi possível carregar os dados.';
         this.isLoading = false;
       }
