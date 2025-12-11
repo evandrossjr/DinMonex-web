@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router'; // Importa o Router para navegação
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://dimonex.onrender.com/api/auth';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
   private tokenKey = 'dinmonex_auth_token';
 
   constructor(private http: HttpClient, private router: Router) { }
