@@ -8,6 +8,30 @@
     <button class="add-btn" (click)="openAddModal()">+ Adicionar</button>
   </div>
 
+  <!-- Filtro de Data -->
+  <div class="filter-container" style="margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px;">
+    <label>Filtrar Período: </label>
+    <input type="month" [(ngModel)]="currentMonthFilter" (change)="onDateChange()">
+  </div>
+
+  <!-- Resumo Financeiro -->
+  <div class="cards-container" style="display: flex; gap: 20px; margin-bottom: 20px;">
+    <div style="background: #3b82f6; color: white; padding: 20px; border-radius: 8px; flex: 1;">
+        <h3>Total Geral</h3>
+        <h1>{{ summaryData.totalGeral | currency:'BRL' }}</h1>
+    </div>
+
+    <div style="background: #10b981; color: white; padding: 20px; border-radius: 8px; flex: 1;">
+        <h3>Total Pago</h3>
+        <h1>{{ summaryData.totalPago | currency:'BRL' }}</h1>
+    </div>
+
+    <div style="background: #ef4444; color: white; padding: 20px; border-radius: 8px; flex: 1;">
+        <h3>Total Pendente</h3>
+        <h1>{{ summaryData.totalPendente | currency:'BRL' }}</h1>
+    </div>
+  </div>  
+
   <!-- Estados de Carregamento, Erro e Lista Vazia -->
   <div *ngIf="isLoading" class="state-indicator">
     <p>A carregar dados...</p>
