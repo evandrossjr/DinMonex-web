@@ -60,9 +60,10 @@
               <span *ngIf="item.isRecurring" class="badge recurring">Recorrente</span>
             </div>
             <div *ngIf="item.type === 'CREDIT_CARD'" class="item-meta">
-              <span>Compra em {{ item.totalInstallments }}x</span>
-              <button class="view-installments-btn" (click)="openInstallmentModal(item)">Ver Parcelas</button>
-            </div>
+            <span class="badge credit">
+                Parcela {{ item.currentInstallment }}/{{ item.totalInstallments }}
+            </span>
+          </div>
           </div>
           <div class="item-value" [class.credit]="item.type === 'CREDIT_CARD'">
             <span>{{ item.value | currency: 'BRL' }}</span>
@@ -111,9 +112,5 @@
   (formSaved)="onFormSaved()">
 </app-transaction-form>
 
-<app-installment-list
-  *ngIf="isInstallmentModalVisible"
-  [installments]="selectedTransactionInstallments"
-  (closeModal)="onCloseInstallmentModal()">
-</app-installment-list>
+
 
