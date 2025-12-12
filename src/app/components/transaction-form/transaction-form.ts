@@ -101,8 +101,7 @@ export class TransactionFormComponent implements OnInit {
     this.isLoading = true;
     const formData = this.transactionForm.getRawValue();
 
-    // A SOLUÇÃO: Tipamos a variável explicitamente para que o TypeScript a entenda.
-    let submissionObservable: Observable<Transaction | SharedDebt>;
+    let submissionObservable: Observable<any>;
 
     if (this.isEditMode && this.transactionId) {
       submissionObservable = this.transactionService.updateConsumptionTransaction(this.transactionId, formData);
@@ -126,6 +125,13 @@ export class TransactionFormComponent implements OnInit {
     submissionObservable.subscribe({
       next: () => this.handleSuccess(),
       error: (err) => this.handleError(err)
+    });
+  }
+
+  onStatusChange(event: any) {
+    const isPaid = event.target.checked;
+    this.transactionForm.patchValue({
+    status: isPaid ? 'PAID' : 'PENDING'
     });
   }
 
