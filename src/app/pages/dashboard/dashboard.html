@@ -52,7 +52,16 @@
 
         <div class="item-info">
           <div class="item-details">
-            <span class="item-description">{{ item.description }}</span>
+            <div style="display: flex; align-items: center;"> 
+    
+              <span *ngIf="item.groupColor" 
+                    class="group-dot" 
+                    [style.background-color]="item.groupColor"
+                    [title]="item.groupName">
+              </span>
+              
+              <span class="item-description">{{ item.description }}</span>
+            </div>
             
             <div *ngIf="item.type === 'CONSUMPTION'" class="item-meta">
               <span>Vencimento: {{ item.dueDate | date: 'dd/MM/yyyy' }}</span>

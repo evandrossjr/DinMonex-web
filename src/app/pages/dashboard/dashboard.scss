@@ -269,3 +269,13 @@ nav {
 
 }
 
+.group-dot {
+    display: inline-block; /* ESSENCIAL: Sem isso o span tem tamanho 0 */
+    width: 12px;           /* Largura */
+    height: 12px;          /* Altura */
+    border-radius: 50%;    /* Redondo */
+    margin-right: 8px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
