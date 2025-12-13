@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { Transaction } from '../../model/transaction.model';
-import { Installment } from '../../model/installment.model';
 import { TransactionService } from '../../services/transaction';
 import { DebtService } from '../../services/debt';
 import { TransactionFormComponent } from '../../components/transaction-form/transaction-form';
-import { InstallmentListComponent } from '../../components/installment-list/installment-list';
 import { AuthService } from '../../services/auth';
 import { forkJoin, map } from 'rxjs';
 import { SharedDebt } from '../../model/sharedDebt.model';
@@ -16,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HeaderComponent,CommonModule, TransactionFormComponent, InstallmentListComponent, FormsModule],
+  imports: [HeaderComponent,CommonModule, TransactionFormComponent, FormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -28,7 +26,7 @@ export class DashboardComponent implements OnInit {
   isTransactionModalVisible = false;
   selectedTransactionId: number | null = null;
   isInstallmentModalVisible = false;
-  selectedTransactionInstallments: Installment[] = [];
+
 
   currentMonthFilter: string = new Date().toISOString().substring(0, 7);
   summaryData: {totalGeral: number, totalPago: number, totalPendente: number} = {totalGeral: 0, totalPago: 0, totalPendente: 0};
@@ -38,6 +36,20 @@ export class DashboardComponent implements OnInit {
     private debtService: DebtService,
     private authService: AuthService
   ) { }
+
+  toggleStatus(item: any, event: any): void {
+    const isPaid = event.target.checked;
+
+    this.transactionService.patchPay(item.id, isPaid).subscribe({
+      next: () => {
+        item.status = isPaid ? 'PAID' : 'PENDING';
+        this.loadAllData();
+      }, error: (err) => {
+        console.error('Erro ao atualizar o status de pagamento:', err);
+        event.target.checked = !isPaid; // Reverte o checkbox em caso de erro
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loadAllData();
@@ -123,17 +135,6 @@ export class DashboardComponent implements OnInit {
     this.loadAllData();
   }
   
-  openInstallmentModal(transaction: Transaction): void {
-    if (transaction.installments && transaction.installments.length > 0) {
-      this.selectedTransactionInstallments = transaction.installments;
-      this.isInstallmentModalVisible = true;
-    }
-  }
-
-  onCloseInstallmentModal(): void {
-    this.isInstallmentModalVisible = false;
-    this.selectedTransactionInstallments = [];
-  }
 
   logout(): void {
     this.authService.logout();

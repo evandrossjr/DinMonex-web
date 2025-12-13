@@ -220,5 +220,52 @@ nav {
     border-color: #dc3545;
     color: #dc3545;
   }
+
+ /* Configuração do Card */
+.item-card {
+    display: flex;
+    align-items: center; /* Alinha o checkbox com o texto */
+    padding: 15px;
+    background: white;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s ease;
+
+    /* Quando a classe 'is-paid' é adicionada pelo Angular */
+    &.is-paid {
+        background-color: #f0fdf4; /* Um verde bem clarinho */
+        opacity: 0.75;
+
+        .item-description {
+            text-decoration: line-through; /* Riscado */
+            color: #6b7280; /* Cinza */
+        }
+
+        .item-value span {
+            color: #10b981; /* Valor fica verde */
+            font-weight: bold;
+        }
+        
+        .item-meta {
+            text-decoration: none; /* Não risca a data */
+            opacity: 0.6;
+        }
+    }
+}
+
+/* Garante que o checkbox não suma em telas pequenas */
+.item-checkbox-wrapper {
+    flex-shrink: 0; 
+}
+
+/* O resto do layout flex para preencher o espaço */
+.item-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 15px;
+}
+
+
 }
 

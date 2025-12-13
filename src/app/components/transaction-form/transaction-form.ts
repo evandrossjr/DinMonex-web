@@ -40,7 +40,8 @@ export class TransactionFormComponent implements OnInit {
       dueDate: ['', [Validators.required]],
       isRecurring: [false],
       totalInstallments: [1, [Validators.min(1)]],
-      invitedUserEmail: ['', [Validators.email]] 
+      invitedUserEmail: ['', [Validators.email]],
+      status: ['PENDING']
     });
   }
 
@@ -101,8 +102,7 @@ export class TransactionFormComponent implements OnInit {
     this.isLoading = true;
     const formData = this.transactionForm.getRawValue();
 
-    // A SOLUÇÃO: Tipamos a variável explicitamente para que o TypeScript a entenda.
-    let submissionObservable: Observable<Transaction | SharedDebt>;
+    let submissionObservable: Observable<any>;
 
     if (this.isEditMode && this.transactionId) {
       submissionObservable = this.transactionService.updateConsumptionTransaction(this.transactionId, formData);
@@ -127,6 +127,19 @@ export class TransactionFormComponent implements OnInit {
       next: () => this.handleSuccess(),
       error: (err) => this.handleError(err)
     });
+  }
+
+  get isPaid(): boolean {
+  return this.transactionForm.get('status')?.value === 'PAID';
+}
+
+  onStatusChange(event: any) {
+    const isChecked = event.target.checked;
+    console.log('Checkbox mudou para:', isChecked); // Debug
+    this.transactionForm.patchValue({
+    status: isChecked ? 'PAID' : 'PENDING'
+    });
+    console.log('Novo status no Form:', this.transactionForm.get('status')?.value); // Debug
   }
 
   private handleSuccess(): void {

@@ -11,11 +11,11 @@ export interface Transaction {
   value: number;
   dueDate: string; 
   isRecurring: boolean;
-
+  status: 'PENDING' | 'PAID' | 'OVERDUE';
   type: 'CONSUMPTION' | 'CREDIT_CARD' | 'DEBT'; 
 
 
-  totalInstallments?: number; // O '?' indica que a propriedade é opcional
+  totalInstallments?: number; // O
   currentInstallment?: number;
-  installments?: Installment[]; // Uma transação pode ter uma lista de parcelas
+  
 }
