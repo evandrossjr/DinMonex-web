@@ -1,3 +1,4 @@
+import { Inject, Injectable } from "@angular/core";
 import { Installment } from "./installment.model";
 
 
@@ -14,8 +15,14 @@ export interface Transaction {
   status: 'PENDING' | 'PAID' | 'OVERDUE';
   type: 'CONSUMPTION' | 'CREDIT_CARD' | 'DEBT'; 
 
+  groupId?: number;
+  groupName?: string;
+  groupColor?: string;
+
 
   totalInstallments?: number; // O
   currentInstallment?: number;
   
 }
+
+
