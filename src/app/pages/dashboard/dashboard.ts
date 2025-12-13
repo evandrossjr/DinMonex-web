@@ -38,26 +38,15 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   toggleStatus(item: any, event: any): void {
-    const novoStatus = event.target.checked ? 'PAID' : 'PENDING';
+    const isPaid = event.target.checked;
 
-    const updateData = {
-      ...item, // Copia os dados atuais
-      status: novoStatus
-    };
-
-    // Chama o serviço de atualização (reutilizamos o endpoint de update)
-    // Nota: O ideal seria ter um endpoint PATCH /pay, mas o PUT resolve por enquanto.
-    this.transactionService.updateConsumptionTransaction(item.id, updateData).subscribe({
+    this.transactionService.patchPay(item.id, isPaid).subscribe({
       next: () => {
-        // Atualiza o item localmente para não precisar recarregar a tela toda
-        item.status = novoStatus;
-        // Recalcula os totais (ou recarrega tudo se preferir garantir a consistência)
-        this.loadAllData(); 
-      },
-      error: (err) => {
-        console.error('Erro ao atualizar status', err);
-        // Desfaz a marcação visual se der erro no servidor
-        event.target.checked = !event.target.checked;
+        item.status = isPaid ? 'PAID' : 'PENDING';
+        this.loadAllData();
+      }, error: (err) => {
+        console.error('Erro ao atualizar o status de pagamento:', err);
+        event.target.checked = !isPaid; // Reverte o checkbox em caso de erro
       }
     });
   }

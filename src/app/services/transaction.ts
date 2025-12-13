@@ -69,5 +69,9 @@ export class TransactionService {
   createCreditCardTransaction(transactionData: any): Observable<Transaction[]> {
     return this.http.post<Transaction[]>(`${this.apiUrl}/credit-card`, transactionData);
   }
-}
 
+  patchPay(id: number, status: boolean): Observable<void> {
+    const body = { paid: status };
+    return this.http.patch<void>(`${this.apiUrl}/${id}/pay`, body);
+  }
+}

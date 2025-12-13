@@ -40,7 +40,8 @@ export class TransactionFormComponent implements OnInit {
       dueDate: ['', [Validators.required]],
       isRecurring: [false],
       totalInstallments: [1, [Validators.min(1)]],
-      invitedUserEmail: ['', [Validators.email]] 
+      invitedUserEmail: ['', [Validators.email]],
+      status: ['PENDING']
     });
   }
 
@@ -128,11 +129,17 @@ export class TransactionFormComponent implements OnInit {
     });
   }
 
+  get isPaid(): boolean {
+  return this.transactionForm.get('status')?.value === 'PAID';
+}
+
   onStatusChange(event: any) {
-    const isPaid = event.target.checked;
+    const isChecked = event.target.checked;
+    console.log('Checkbox mudou para:', isChecked); // Debug
     this.transactionForm.patchValue({
-    status: isPaid ? 'PAID' : 'PENDING'
+    status: isChecked ? 'PAID' : 'PENDING'
     });
+    console.log('Novo status no Form:', this.transactionForm.get('status')?.value); // Debug
   }
 
   private handleSuccess(): void {

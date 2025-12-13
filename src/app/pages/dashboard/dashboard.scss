@@ -221,49 +221,51 @@ nav {
     color: #dc3545;
   }
 
-  /* Checkbox Customizado */
-.status-checkbox {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    margin-right: 15px;
-    accent-color: #10b981; // Cor verde quando marcado
-}
-
-/* Efeito quando está PAGO */
-.item-card.is-paid {
-    background-color: #f9fafb; // Fundo mais claro
-    opacity: 0.8;
-
-    .item-description {
-        text-decoration: line-through; // Risco no texto
-        color: #9ca3af; // Texto cinza
-    }
-
-    .item-value {
-        color: #10b981; // Valor fica verde
-    }
-}
-
+ /* Configuração do Card */
 .item-card {
     display: flex;
-    align-items: center;
+    align-items: center; /* Alinha o checkbox com o texto */
     padding: 15px;
     background: white;
     border-bottom: 1px solid #eee;
-    
-    // Layout Flex para alinhar checkbox + info + ações
-    .item-status { display: flex; align-items: center; }
-    .item-info { flex: 1; display: flex; justify-content: space-between; align-items: center; }
-    .item-actions { margin-left: 15px; display: flex; gap: 10px; }
+    transition: background-color 0.3s ease;
+
+    /* Quando a classe 'is-paid' é adicionada pelo Angular */
+    &.is-paid {
+        background-color: #f0fdf4; /* Um verde bem clarinho */
+        opacity: 0.75;
+
+        .item-description {
+            text-decoration: line-through; /* Riscado */
+            color: #6b7280; /* Cinza */
+        }
+
+        .item-value span {
+            color: #10b981; /* Valor fica verde */
+            font-weight: bold;
+        }
+        
+        .item-meta {
+            text-decoration: none; /* Não risca a data */
+            opacity: 0.6;
+        }
+    }
 }
 
-.cards-container {
-    display: flex; gap: 20px; margin-bottom: 20px;
-    .card { flex: 1; padding: 20px; border-radius: 8px; color: white; }
-    .card-blue { background: #3b82f6; }
-    .card-green { background: #10b981; }
-    .card-red { background: #ef4444; }
+/* Garante que o checkbox não suma em telas pequenas */
+.item-checkbox-wrapper {
+    flex-shrink: 0; 
 }
+
+/* O resto do layout flex para preencher o espaço */
+.item-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 15px;
+}
+
+
 }
 
