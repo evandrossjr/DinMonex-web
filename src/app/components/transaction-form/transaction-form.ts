@@ -6,12 +6,13 @@ import { TransactionService } from '../../services/transaction';
 import { DebtService } from '../../services/debt';
 import { Observable } from 'rxjs'; 
 import { SharedDebt } from '../../model/sharedDebt.model';
-
+import { GroupFormComponent } from '../group-form/group-form';
+import { TransactionGroup } from '../../services/transaction';
 
 @Component({
   selector: 'app-transaction-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, GroupFormComponent],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.scss'
 })
@@ -25,6 +26,9 @@ export class TransactionFormComponent implements OnInit {
   isEditMode = false;
   isLoading = false;
   errorMessage: string | null = null;
+  isGroupModalVisible = false;
+
+  groups: TransactionGroup[] = [];
 
   transactionTypes = ['CONSUMPTION', 'CREDIT_CARD', 'DEBT'];
 
@@ -41,11 +45,15 @@ export class TransactionFormComponent implements OnInit {
       isRecurring: [false],
       totalInstallments: [1, [Validators.min(1)]],
       invitedUserEmail: ['', [Validators.email]],
-      status: ['PENDING']
+      status: ['PENDING'],
+      groupId: [null]
     });
   }
 
   ngOnInit(): void {
+
+    this.loadGroups();
+
     this.setupConditionalValidators();
 
     if (this.transactionId !== null) {
@@ -64,6 +72,17 @@ export class TransactionFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  loadGroups() {
+    this.transactionService.getAllTransactionGroups().subscribe({
+      next: (data) => {
+        this.groups =data;  
+      },
+      error: (err) => {
+        console.error('Erro ao carregar grupos:', err);
+      }
+    });
   }
 
   private setupConditionalValidators(): void {
@@ -152,6 +171,18 @@ export class TransactionFormComponent implements OnInit {
     this.isLoading = false;
     this.errorMessage = 'Ocorreu um erro ao salvar. Por favor, verifique os dados e tente novamente.';
     console.error(error);
+  }
+
+  openGroupModal(){
+    this.isGroupModalVisible = true;
+  }
+
+  closeGroupModal(){
+    this.isGroupModalVisible = false;
+  }
+
+  onGroupSaved() {
+    this.loadGroups();
   }
 
   onClose(): void {

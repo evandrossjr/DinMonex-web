@@ -1,0 +1,38 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Nova Categoria</h2>
+      <button class="close-btn" (click)="onCancel()">×</button>
+    </div>
+
+    <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" formControlName="name" placeholder="Ex: Casa, Lazer, Mercado">
+      </div>
+
+      <div class="form-group">
+        <label>Cor da Etiqueta</label>
+        <div class="color-picker-wrapper">
+          <input type="color" formControlName="hexColor" id="colorInput">
+          
+          <label for="colorInput" 
+                 class="color-preview" 
+                 [style.background-color]="groupForm.get('hexColor')?.value">
+          </label>
+          
+          <span class="color-code">{{ groupForm.get('hexColor')?.value }}</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()">Cancelar</button>
+        <button type="submit" class="btn-save" [disabled]="groupForm.invalid || isLoading">
+          {{ isLoading ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

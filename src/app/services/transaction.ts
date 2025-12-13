@@ -13,6 +13,12 @@ export interface ResumeTransactionDTO {
   totalPendente: number;
 }
 
+export interface TransactionGroup {
+  id: number;
+  name: string;
+  hexColor: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -74,4 +80,15 @@ export class TransactionService {
     const body = { paid: status };
     return this.http.patch<void>(`${this.apiUrl}/${id}/pay`, body);
   }
+
+  getAllTransactionGroups(): Observable<TransactionGroup[]> {
+    return this.http.get<TransactionGroup[]>(`${this.apiUrl}/groups`);
+  } 
+
+  createGroupTransaction(groupData: {name: string, hexColor: string}): Observable<TransactionGroup> {
+    return this.http.post<TransactionGroup>(`${this.apiUrl}/groups`, groupData);
+  }
+
+  
+
 }

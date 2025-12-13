@@ -73,6 +73,30 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label for="group">Categoria</label>
+        <div style="display: flex; gap: 10px;">
+            
+            <select id="group" formControlName="groupId" class="form-control" style="flex: 1;">
+                <option [ngValue]="null">Sem Categoria</option>
+                <option *ngFor="let group of groups" [ngValue]="group.id">
+                    {{ group.name }}
+                </option>
+            </select>
+
+            <button type="button" 
+                    (click)="openGroupModal()" 
+                    style="width: 40px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1.2rem;"
+                    title="Nova Categoria">
+                +
+            </button>
+        </div>
+      </div>
+      <app-group-form 
+          *ngIf="isGroupModalVisible"
+          (closeModal)="closeGroupModal()"
+          (groupSaved)="onGroupSaved()">
+      </app-group-form>
       
    <div class="form-group checkbox-group" style="margin: 15px 0;">
     <div class="checkbox-wrapper" style="display: flex; align-items: center; gap: 10px;">
